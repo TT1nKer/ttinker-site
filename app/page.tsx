@@ -78,31 +78,22 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="system-visual" aria-hidden="true">
-          <div className="coordinate top">N 43.6532°</div>
-          <div className="coordinate bottom">E 79.3832°</div>
-          <div className="orbit orbit-one"><i /><i /><i /></div>
-          <div className="orbit orbit-two"><i /><i /></div>
-          <div className="signal-ring" />
-          <div className="runner runner-a" />
-          <div className="runner runner-b" />
-          <div className="core">
-            <span>TT1</span>
-            <small>SYS.RUN</small>
-          </div>
-          <div className="axis axis-x" />
-          <div className="axis axis-y" />
-          <p>PROBABLY OVERTHINKING IT</p>
+        <div className="signature-field" aria-hidden="true">
+          <span className="print-one one-cyan">1</span>
+          <span className="print-one one-coral">1</span>
+          <span className="print-one one-main">1</span>
+          <span className="signature-label">TT1 / SIGNAL WORKSHOP</span>
+          <span className="signature-note note-a">UNFINISHED<br />BY DEFAULT</span>
+          <span className="signature-note note-b">REV. 2026.07</span>
         </div>
 
-        <div className="telemetry-rail" aria-hidden="true">
-          <span>01 / BUILD</span><span>02 / BREAK</span><span>03 / REPEAT</span>
-        </div>
-
-        <div className="hero-stats" aria-label="GitHub 公开数据快照">
-          <div><strong>60</strong><span>PUBLIC REPOS</span></div>
-          <div><strong>WIP</strong><span>CURRENT STATE</span></div>
-          <div><strong>AI</strong><span>TOOL OF CHOICE</span></div>
+        <div className="process-loop" aria-label="创作循环">
+          <div className="process-step"><small>01</small><span>IDEA</span></div>
+          <div className="process-step"><small>02</small><span>PROMPT</span></div>
+          <div className="process-step"><small>03</small><span>CODE</span></div>
+          <div className="process-step"><small>04</small><span>TEST</span></div>
+          <div className="process-step question"><small>05</small><span>?</span></div>
+          <i className="process-pulse" />
         </div>
       </section>
 
@@ -133,6 +124,7 @@ export default function Home() {
           {projects.map((project) => (
             <a
               className={`project-card${project.featured ? " featured" : ""}`}
+              data-index={project.index}
               href={project.href}
               target="_blank"
               rel="noreferrer"
@@ -145,6 +137,9 @@ export default function Home() {
               <div className="project-body">
                 <h3>{project.name}</h3>
                 <p>{project.description}</p>
+              </div>
+              <div className="project-wave" aria-hidden="true">
+                <i /><i /><i /><i /><i /><i /><i /><i />
               </div>
               <div className="project-foot">
                 <span>{project.detail}</span><b>↗</b>
