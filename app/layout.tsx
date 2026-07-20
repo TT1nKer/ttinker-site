@@ -1,34 +1,24 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("host") || "localhost:3000";
-  const protocol = requestHeaders.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
-  const origin = `${protocol}://${host}`;
-
-  return {
-    title: "TT1nKer — Building Between Silicon & Thought",
-    description: "Computer engineer and experimental builder working across embedded systems, AI agents, complex networks, compilers, and speculative worlds.",
-    openGraph: {
-      title: "TT1nKer — Building Between Silicon & Thought",
-      description: "From circuits and compilers to synthetic minds.",
-      type: "website",
-      images: [{ url: `${origin}/og.png`, width: 1200, height: 630, alt: "TT1nKer — Building Between Silicon & Thought" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "TT1nKer — Building Between Silicon & Thought",
-      description: "From circuits and compilers to synthetic minds.",
-      images: [`${origin}/og.png`],
-    },
-  };
-}
+export const metadata: Metadata = {
+  title: "TT1nKer — Things I’m Making",
+  description: "A computer engineering student learning in public through vibe-coded tools, half-finished experiments, hardware side quests, and too many repositories.",
+  openGraph: {
+    title: "TT1nKer — Things I’m Making",
+    description: "Vibe-coded tools, half-finished experiments, and hardware side quests.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "TT1nKer — Things I’m Making",
+    description: "Vibe-coded tools, half-finished experiments, and hardware side quests.",
+  },
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

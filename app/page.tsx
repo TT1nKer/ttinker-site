@@ -1,66 +1,66 @@
 const projects = [
   {
     index: "01",
-    name: "BoOS",
-    area: "AI × SYSTEMS",
+    name: "chatcommons",
+    area: "EARLY / ACTIVE",
     description:
-      "一个 AI-native 的操作系统层：让 agent 拥有记忆、意图、权限与可审计行动，而不只是住在应用层。",
-    detail: "Linux · Agents · Rust",
-    href: "https://github.com/BoltzmannOS-BoOS/BoOS",
+      "一个社区自有、offline-first 的聊天协议。还很早期，但我最近确实在认真做它。",
+    detail: "Rust · Protocols · Offline-first",
+    href: "https://github.com/TT1nKer/chatcommons",
     featured: true,
   },
   {
     index: "02",
-    name: "fstCC",
-    area: "FROM ZERO",
+    name: "opensender",
+    area: "WORKING TOOL",
     description:
-      "用手写 RISC-V 汇编自举一个 C 编译器。没有 libc，没有 LLVM，Stage 0 已通过 39/39 测试。",
-    detail: "RISC-V · Assembly · Compilers",
-    href: "https://github.com/TT1nKer/fstCC",
+      "跨境传文件太慢，所以写了一个高并发传输工具。它解决了我的问题，顺便让我补了很多网络课。",
+    detail: "Go · HTTP Range · Networking",
+    href: "https://github.com/TT1nKer/opensender",
   },
   {
     index: "03",
     name: "adaptiveNet",
-    area: "COMPLEX SYSTEMS",
+    area: "PLAYGROUND",
     description:
-      "在浏览器里探索 Gray–Scott、Hopfield、Ising、脉冲神经元与图灵斑图，让方程变成可触摸的直觉。",
+      "把 Gray–Scott、Hopfield、Ising 和脉冲神经元塞进浏览器。更像一个会动的学习笔记，不是严肃研究。",
     detail: "TypeScript · Dynamics · WebGL",
     href: "https://github.com/TT1nKer/adaptiveNet",
   },
   {
     index: "04",
     name: "Model Brain Surgery",
-    area: "MECHANISTIC AI",
+    area: "EXPERIMENT / WIP",
     description:
-      "对 Transformer 做维度手术：知识分离、persona 向量、方向消融与实时记忆编辑。",
+      "一些关于模型消融、persona 向量和记忆编辑的实验脚手架。主要用来验证脑洞，结论还在路上。",
     detail: "Python · Transformers · Ablation",
     href: "https://github.com/TT1nKer/model-brain-surgery-lab",
   },
   {
     index: "05",
-    name: "opensender",
-    area: "NETWORKS",
+    name: "fstCC",
+    area: "LEARNING PROJECT",
     description:
-      "为高延迟链路设计的并发文件传输器。在真实跨境链路上，把单流基线提升约 170 倍。",
-    detail: "Go · HTTP Range · Systems",
-    href: "https://github.com/TT1nKer/opensender",
+      "试着用 RISC-V 汇编自举一个很小的 C 编译器。测试能跑，但它更像一次从零理解编译器的练习。",
+    detail: "RISC-V · Assembly · Compilers",
+    href: "https://github.com/TT1nKer/fstCC",
   },
   {
     index: "06",
-    name: "After Branching",
-    area: "SPECULATIVE FICTION",
+    name: "StockItsMygo",
+    area: "HOBBY PROJECT",
     description:
-      "一部关于制度如何繁殖、竞争与吞噬的科幻设定：当文明成为超有机体，异议就是它的感觉器官。",
-    detail: "Worldbuilding · Institutions · Sci-fi",
-    href: "https://github.com/TT1nKer/after-branching",
+      "个人股票观察 dashboard：watchlist、指标筛选和一些数据管道。写着玩，不构成任何投资建议。",
+    detail: "Python · PostgreSQL · Data",
+    href: "https://github.com/TT1nKer/StockItsMygo",
   },
 ];
 
 const signals = [
-  ["AI-native systems", "让 AI 从工具变成有边界、有记忆、可问责的系统主体。"],
-  ["Mechanisms, not magic", "我更关心模型内部发生了什么，以及怎样用实验把它拆开。"],
-  ["Build from first principles", "从 bootloader、RTOS、PCB 到编译器；理解一层的最好方式是亲手造一遍。"],
-  ["Ideas need a body", "一个概念只有变成程序、设备、交互或故事，才真正开始接受现实的检验。"],
+  ["Follow the rabbit hole", "我经常因为一个小问题突然开仓库。它不一定有用，但通常能让我学会点东西。"],
+  ["Vibe code, honestly", "大量代码是和 AI 一起写的。我负责提问题、做取舍、测试，以及在它胡说时把方向拽回来。"],
+  ["Prototype before expertise", "我不会等到“够资格”才开始。很多项目就是我理解一个陌生领域的方法。"],
+  ["It’s okay to leave things WIP", "有些仓库会长成工具，有些只留下一个能跑的想法。两种都算数。"],
 ];
 
 export default function Home() {
@@ -79,17 +79,17 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span className="status-dot" /> COMPUTER ENGINEERING · BUILDER · TT1NKER</p>
+          <p className="eyebrow"><span className="status-dot" /> COMPUTER ENGINEERING STUDENT · CURIOUS GENERALIST</p>
           <h1>
-            BUILDING BETWEEN
-            <span>SILICON &amp; THOUGHT.</span>
+            I MAKE THINGS.
+            <span>MOSTLY WITH AI.</span>
           </h1>
           <p className="hero-intro">
-            我在硬件、底层系统、复杂网络与人工智能之间工作。喜欢从第一性原理出发，
-            把还没有名字的想法做成可以运行、可以测量、也可以被质疑的东西。
+            我不是什么全栈大神。大部分项目都是边学边做，也让 AI 写了很多代码；
+            有些真的能用，有些只是一个想法长出了仓库。这里放的是我最近折腾过的东西。
           </p>
           <div className="hero-actions">
-            <a className="primary-button" href="#work">查看实验 / VIEW WORK <b>↘</b></a>
+            <a className="primary-button" href="#work">随便看看 / BROWSE AROUND <b>↘</b></a>
             <a className="text-link" href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">github.com/TT1nKer ↗</a>
           </div>
         </div>
@@ -105,13 +105,13 @@ export default function Home() {
           </div>
           <div className="axis axis-x" />
           <div className="axis axis-y" />
-          <p>THE SYSTEM IS THE MEDIUM</p>
+          <p>PROBABLY OVERTHINKING IT</p>
         </div>
 
         <div className="hero-stats" aria-label="GitHub 公开数据快照">
-          <div><strong>60</strong><span>PUBLIC REPOS</span></div>
-          <div><strong>324</strong><span>CONTRIBUTIONS / YR</span></div>
-          <div><strong>∞</strong><span>CURIOSITY BUDGET</span></div>
+          <div><strong>60</strong><span>REPOS, FORKS INCLUDED</span></div>
+          <div><strong>WIP</strong><span>DEFAULT STATUS</span></div>
+          <div><strong>AI</strong><span>PAIR PROGRAMMER</span></div>
         </div>
       </section>
 
@@ -124,10 +124,10 @@ export default function Home() {
       <section className="work-section" id="work">
         <div className="section-heading">
           <div>
-            <p className="section-index">[ 01 / SELECTED EXPERIMENTS ]</p>
-            <h2>THINGS I’VE<br />MADE REAL.</h2>
+            <p className="section-index">[ 01 / RECENT RABBIT HOLES ]</p>
+            <h2>THINGS I’VE<br />MESSED WITH.</h2>
           </div>
-          <p>不是作品集，而是一组持续生长的实验。<br />每一个都从一个“如果……”开始。</p>
+          <p>不是精选代表作，也不保证做完。<br />只是目前还愿意公开给人看的几个仓库。</p>
         </div>
 
         <div className="project-grid">
@@ -154,17 +154,17 @@ export default function Home() {
           ))}
         </div>
         <a className="all-projects" href="https://github.com/TT1nKer?tab=repositories" target="_blank" rel="noreferrer">
-          浏览全部 60 个公开仓库 <span>ALL REPOSITORIES ↗</span>
+          包括 fork、旧坑和黑历史 <span>ALL 60 REPOSITORIES ↗</span>
         </a>
       </section>
 
       <section className="signal-section" id="signal">
         <div className="section-heading inverse">
           <div>
-            <p className="section-index">[ 02 / OPERATING SIGNAL ]</p>
-            <h2>WHAT I KEEP<br />RETURNING TO.</h2>
+            <p className="section-index">[ 02 / HONEST WORKFLOW ]</p>
+            <h2>HOW I ACTUALLY<br />MAKE THINGS.</h2>
           </div>
-          <p>看似分散的项目背后，<br />其实反复出现的是同几个问题。</p>
+          <p>没有神秘方法论。<br />大概就是好奇、AI、测试，然后继续改。</p>
         </div>
 
         <div className="signal-list">
@@ -179,22 +179,22 @@ export default function Home() {
 
         <blockquote>
           <span>“</span>
-          <p>我不是在追逐某一项技术。<br />我在追问：一个系统何时开始拥有自己的行为？</p>
-          <footer>— A QUESTION ACROSS CODE, CIRCUITS &amp; CIVILIZATIONS</footer>
+          <p>我做这些不是因为已经会了。<br />恰恰是因为不会。</p>
+          <footer>— LEARNING IN PUBLIC, WITH A LOT OF GENERATED CODE</footer>
         </blockquote>
       </section>
 
       <section className="now-section">
-        <p className="section-index">[ 03 / CURRENT VECTOR ]</p>
+        <p className="section-index">[ 03 / CURRENTLY MESSING WITH ]</p>
         <div className="now-grid">
-          <h2>NOW,<br />NEXT.</h2>
+          <h2>NOW,<br />MAYBE.</h2>
           <div className="now-copy">
             <p>
-              当前在探索 <strong>AI-native operating systems</strong>、agent memory 与权限边界，
-              也继续把 Transformer 当成一台可以打开盖子研究的机器。
+              最近主要在做 <strong>chatcommons</strong>，想看看社区自有、离线优先的聊天协议能长成什么样；
+              旁边还开着一些 agent、硬件和模型实验，不保证哪个先填完。
             </p>
             <div className="now-tags">
-              <span>BOOS / STAGE 0</span><span>MODEL SURGERY</span><span>AGENT RUNTIME</span>
+              <span>CHATCOMMONS</span><span>MODEL EXPERIMENTS</span><span>HARDWARE SIDE QUESTS</span>
             </div>
           </div>
         </div>
@@ -202,8 +202,8 @@ export default function Home() {
 
       <footer className="site-footer">
         <div>
-          <p>HAVE A STRANGE PROBLEM?</p>
-          <h2>LET’S MAKE IT<br />OBSESSIVELY REAL.</h2>
+          <p>GOT A WEIRD IDEA?</p>
+          <h2>SEND IT<br />MY WAY.</h2>
         </div>
         <a href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">START WITH GITHUB <span>↗</span></a>
         <div className="footer-bottom">
