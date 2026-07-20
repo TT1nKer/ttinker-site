@@ -69,7 +69,7 @@ export default function Home() {
           <p className="eyebrow"><span className="status-dot" /> TT1NKER · COMPUTER ENGINEERING</p>
           <h1>
             THINGS IN
-            <span>PROGRESS.</span>
+            <span className="kinetic" data-text="PROGRESS.">PROGRESS.</span>
           </h1>
           <p className="hero-intro">硬件、系统、AI。持续试验。</p>
           <div className="hero-actions">
@@ -83,6 +83,9 @@ export default function Home() {
           <div className="coordinate bottom">E 79.3832°</div>
           <div className="orbit orbit-one"><i /><i /><i /></div>
           <div className="orbit orbit-two"><i /><i /></div>
+          <div className="signal-ring" />
+          <div className="runner runner-a" />
+          <div className="runner runner-b" />
           <div className="core">
             <span>TT1</span>
             <small>SYS.RUN</small>
@@ -90,6 +93,10 @@ export default function Home() {
           <div className="axis axis-x" />
           <div className="axis axis-y" />
           <p>PROBABLY OVERTHINKING IT</p>
+        </div>
+
+        <div className="telemetry-rail" aria-hidden="true">
+          <span>01 / BUILD</span><span>02 / BREAK</span><span>03 / REPEAT</span>
         </div>
 
         <div className="hero-stats" aria-label="GitHub 公开数据快照">
@@ -100,9 +107,18 @@ export default function Home() {
       </section>
 
       <section className="ticker" aria-label="关注领域">
-        <span>EMBEDDED SYSTEMS</span><i>◆</i><span>AI AGENTS</span><i>◆</i>
-        <span>COMPLEX NETWORKS</span><i>◆</i><span>COMPILERS</span><i>◆</i>
-        <span>SPECULATIVE WORLDS</span><i>◆</i><span>HARDWARE</span>
+        <div className="ticker-track">
+          <div className="ticker-group">
+            <span>EMBEDDED SYSTEMS</span><i>◆</i><span>AI AGENTS</span><i>◆</i>
+            <span>COMPLEX NETWORKS</span><i>◆</i><span>COMPILERS</span><i>◆</i>
+            <span>SPECULATIVE WORLDS</span><i>◆</i><span>HARDWARE</span><i>◆</i>
+          </div>
+          <div className="ticker-group" aria-hidden="true">
+            <span>EMBEDDED SYSTEMS</span><i>◆</i><span>AI AGENTS</span><i>◆</i>
+            <span>COMPLEX NETWORKS</span><i>◆</i><span>COMPILERS</span><i>◆</i>
+            <span>SPECULATIVE WORLDS</span><i>◆</i><span>HARDWARE</span><i>◆</i>
+          </div>
+        </div>
       </section>
 
       <section className="work-section" id="work">
