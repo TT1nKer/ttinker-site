@@ -7,16 +7,16 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: "TT1nKer — Things I’m Making",
-  description: "A computer engineering student learning in public through vibe-coded tools, half-finished experiments, hardware side quests, and too many repositories.",
+  description: "Hardware, systems, AI. Work in progress.",
   openGraph: {
     title: "TT1nKer — Things I’m Making",
-    description: "Vibe-coded tools, half-finished experiments, and hardware side quests.",
+    description: "Hardware, systems, AI. Work in progress.",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "TT1nKer — Things I’m Making",
-    description: "Vibe-coded tools, half-finished experiments, and hardware side quests.",
+    description: "Hardware, systems, AI. Work in progress.",
   },
 };
 
