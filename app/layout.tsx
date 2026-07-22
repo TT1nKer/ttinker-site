@@ -6,8 +6,8 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TT1nKer — Things I’m Making",
-  description: "Hardware, systems, AI. Work in progress.",
+  title: "TT1nKer",
+  description: "Hardware, systems, AI.",
   icons: {
     icon: [
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
@@ -17,14 +17,14 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "TT1nKer — Things I’m Making",
-    description: "Hardware, systems, AI. Work in progress.",
+    title: "TT1nKer",
+    description: "Hardware, systems, AI.",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "TT1nKer — Things I’m Making",
-    description: "Hardware, systems, AI. Work in progress.",
+    title: "TT1nKer",
+    description: "Hardware, systems, AI.",
   },
 };
 

@@ -67,9 +67,8 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow"><span className="status-dot" /> TT1NKER · COMPUTER ENGINEERING</p>
-          <h1>
-            THINGS IN
-            <span className="kinetic" data-text="PROGRESS.">PROGRESS.</span>
+          <h1 className="hero-title" aria-label="TT1nKer">
+            TT<span className="kinetic">1</span>NKER.
           </h1>
           <p className="hero-intro">硬件、系统、AI。持续试验。</p>
           <div className="hero-actions">
@@ -79,12 +78,8 @@ export default function Home() {
         </div>
 
         <div className="signature-field" aria-hidden="true">
-          <span className="print-one one-cyan">1</span>
-          <span className="print-one one-coral">1</span>
-          <span className="print-one one-main">1</span>
-          <span className="signature-label">TT1 / SIGNAL WORKSHOP</span>
-          <span className="signature-note note-a">UNFINISHED<br />BY DEFAULT</span>
-          <span className="signature-note note-b">REV. 2026.07</span>
+          <img className="question-one-art" src="/ttinker-question-one-v1.png" alt="" />
+          <i className="signal-scan" />
         </div>
 
         <div className="process-loop" aria-label="创作循环">
