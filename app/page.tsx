@@ -1,3 +1,5 @@
+import GlitchTitle from "./GlitchTitle";
+
 const projects = [
   {
     index: "01",
@@ -67,9 +69,7 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow"><span className="status-dot" /> TT1NKER · COMPUTER ENGINEERING</p>
-          <h1 className="hero-title" data-text="TT1NKER." aria-label="TT1nKer">
-            TT<span className="kinetic">1</span>NKER.
-          </h1>
+          <GlitchTitle />
           <span className="chromatic-rule" aria-hidden="true" />
           <p className="hero-intro">硬件、系统、AI。持续试验。</p>
           <div className="hero-actions">
