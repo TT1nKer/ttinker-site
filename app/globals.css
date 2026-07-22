@@ -152,12 +152,41 @@ a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   position: absolute;
   left: 50%;
   top: 49%;
+  isolation: isolate;
+  display: block;
   font-size: clamp(330px, 35vw, 540px);
+  font-family: var(--font-geist-mono), monospace;
   font-weight: 900;
   line-height: .72;
   letter-spacing: -.16em;
   transform: translate(-50%, -50%);
   user-select: none;
+}
+.print-one:before {
+  content: "?";
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: -.015em;
+  color: inherit;
+  font: inherit;
+  line-height: .72;
+  letter-spacing: 0;
+  transform: translateX(-50%);
+  clip-path: inset(0 0 48% 0);
+}
+.print-one:after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: .76em;
+  width: .075em;
+  height: .075em;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateX(-50%);
+  box-shadow: 0 0 .045em currentColor;
 }
 .one-cyan { z-index: 0; color: var(--cyan); transform: translate(calc(-50% - 17px), calc(-50% + 11px)); animation: layer-cyan 7s ease-in-out infinite; }
 .one-coral { z-index: 1; color: var(--coral); transform: translate(calc(-50% + 15px), calc(-50% - 8px)); animation: layer-coral 8.5s ease-in-out infinite; }
@@ -170,6 +199,14 @@ a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   background-clip: text;
   animation: stripe-flow 5s linear infinite;
 }
+.one-main:before {
+  color: transparent;
+  -webkit-text-stroke: 3px var(--paper);
+  background: repeating-linear-gradient(90deg, var(--paper) 0 5px, transparent 5px 13px);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.one-main:after { background: var(--paper); box-shadow: -8px 2px 0 var(--coral), 8px -2px 0 var(--cyan), 0 0 22px rgba(241,239,229,.2); }
 @keyframes layer-cyan { 50% { transform: translate(calc(-50% - 10px), calc(-50% + 17px)); } }
 @keyframes layer-coral { 50% { transform: translate(calc(-50% + 22px), calc(-50% - 13px)); } }
 @keyframes stripe-flow { to { background-position: 26px 0; } }
