@@ -76,7 +76,7 @@ export default function Home() {
         </div>
 
         <a className="hero-emblem" href="#top" aria-label="TT1nKer 标志，返回顶部">
-          <img src="/icon-tt-question-v1.png" alt="" />
+          <img src="/icon-tt-question-transparent-v2.png" alt="" />
         </a>
 
         <div className="process-loop" aria-label="创作循环">
