@@ -56,7 +56,6 @@ export default function Home() {
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="返回顶部">
           <img src="/icon-tt-question-v1.png" alt="" />
-          <span className="wordmark-text">TT1nKer</span>
         </a>
         <nav aria-label="主导航">
           <a href="#work">WORK</a>
@@ -71,19 +70,12 @@ export default function Home() {
           <h1 className="hero-title" aria-label="TT1nKer">
             TT<span className="kinetic">1</span>NKER.
           </h1>
+          <span className="chromatic-rule" aria-hidden="true" />
           <p className="hero-intro">硬件、系统、AI。持续试验。</p>
           <div className="hero-actions">
             <a className="primary-button" href="#work">随便看看 / BROWSE AROUND <b>↘</b></a>
             <a className="text-link" href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">github.com/TT1nKer ↗</a>
           </div>
-        </div>
-
-        <div className="signal-field" aria-hidden="true">
-          <span className="signal-orbit orbit-a" />
-          <span className="signal-orbit orbit-b" />
-          <i className="signal-node node-a" />
-          <i className="signal-node node-b" />
-          <i className="signal-node node-c" />
         </div>
 
         <div className="process-loop" aria-label="创作循环">
