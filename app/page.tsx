@@ -67,7 +67,7 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow"><span className="status-dot" /> TT1NKER · COMPUTER ENGINEERING</p>
-          <h1 className="hero-title" aria-label="TT1nKer">
+          <h1 className="hero-title" data-text="TT1NKER." aria-label="TT1nKer">
             TT<span className="kinetic">1</span>NKER.
           </h1>
           <span className="chromatic-rule" aria-hidden="true" />
