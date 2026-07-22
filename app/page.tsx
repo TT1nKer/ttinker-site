@@ -56,9 +56,6 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="返回顶部">
-          <img src="/icon-tt-question-v1.png" alt="" />
-        </a>
         <nav aria-label="主导航">
           <a href="#work">WORK</a>
           <a href="#now">NOW</a>
@@ -77,6 +74,10 @@ export default function Home() {
             <a className="text-link" href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">github.com/TT1nKer ↗</a>
           </div>
         </div>
+
+        <a className="hero-emblem" href="#top" aria-label="TT1nKer 标志，返回顶部">
+          <img src="/icon-tt-question-v1.png" alt="" />
+        </a>
 
         <div className="process-loop" aria-label="创作循环">
           <div className="process-step"><small>01</small><span>IDEA</span></div>
