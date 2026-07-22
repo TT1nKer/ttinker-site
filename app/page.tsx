@@ -55,7 +55,8 @@ export default function Home() {
     <main>
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="返回顶部">
-          TT<span>1</span>nKer
+          <img src="/icon-tt-question-v1.png" alt="" />
+          <span className="wordmark-text">TT1nKer</span>
         </a>
         <nav aria-label="主导航">
           <a href="#work">WORK</a>
@@ -77,9 +78,12 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="signature-field" aria-hidden="true">
-          <img className="question-one-art" src="/ttinker-question-one-v1.png" alt="" />
-          <i className="signal-scan" />
+        <div className="signal-field" aria-hidden="true">
+          <span className="signal-orbit orbit-a" />
+          <span className="signal-orbit orbit-b" />
+          <i className="signal-node node-a" />
+          <i className="signal-node node-b" />
+          <i className="signal-node node-c" />
         </div>
 
         <div className="process-loop" aria-label="创作循环">
