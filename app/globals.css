@@ -61,8 +61,7 @@ a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   padding: 164px 4.5vw 146px;
   background:
     linear-gradient(118deg, transparent 0 73%, rgba(83,107,255,.13) 73% 74%, transparent 74%),
-    linear-gradient(62deg, transparent 0 84%, rgba(27,199,210,.1) 84% 85%, transparent 85%),
-    radial-gradient(circle at 72% 48%, rgba(255,83,61,.11), transparent 28%);
+    linear-gradient(62deg, transparent 0 84%, rgba(27,199,210,.1) 84% 85%, transparent 85%);
 }
 .hero-copy { position: relative; z-index: 4; max-width: min(1100px, 64vw); }
 .hero-emblem {
