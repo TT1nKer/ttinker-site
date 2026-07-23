@@ -22,7 +22,7 @@ export default function SignalStage() {
     const stage = stageRef.current;
     if (!stage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const target = { x: 0, y: 0, speed: 0, progress: 1 };
+    const target = { x: 0, y: 0, speed: 0, progress: 0, scroll: 0 };
     const current = { ...target };
     let frame = 0;
     let previousFrame = 0;
@@ -39,19 +39,22 @@ export default function SignalStage() {
       current.y += (target.y - current.y) * direct;
       current.speed += (target.speed - current.speed) * trailing;
       current.progress += (target.progress - current.progress) * trailing;
+      current.scroll += (target.scroll - current.scroll) * trailing;
       target.speed *= Math.exp(-delta * 8);
 
       stage.style.setProperty("--signal-x", current.x.toFixed(4));
       stage.style.setProperty("--signal-y", current.y.toFixed(4));
       stage.style.setProperty("--signal-speed", current.speed.toFixed(4));
       stage.style.setProperty("--stage-progress", current.progress.toFixed(4));
+      stage.style.setProperty("--hero-scroll", current.scroll.toFixed(4));
       stage.dataset.stage = String(clamp(Math.round(current.progress * 4), 0, 4));
 
       const unsettled =
         Math.abs(target.x - current.x) +
           Math.abs(target.y - current.y) +
           Math.abs(target.speed - current.speed) +
-          Math.abs(target.progress - current.progress) >
+          Math.abs(target.progress - current.progress) +
+          Math.abs(target.scroll - current.scroll) >
         0.004;
 
       frame = unsettled ? requestAnimationFrame(render) : 0;
@@ -102,8 +105,15 @@ export default function SignalStage() {
       target.x = 0;
       target.y = 0;
       target.speed = 0;
-      target.progress = 1;
+      target.progress = target.scroll;
       stage.dataset.engaged = "false";
+      start();
+    };
+
+    const onScroll = () => {
+      const progress = clamp(window.scrollY / Math.max(1, stage.offsetHeight * 0.92), 0, 1);
+      target.scroll = progress;
+      if (stage.dataset.engaged !== "true") target.progress = progress;
       start();
     };
 
@@ -119,19 +129,22 @@ export default function SignalStage() {
     stage.addEventListener("pointermove", onPointerMove);
     stage.addEventListener("pointerdown", onPointerDown);
     stage.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
+    onScroll();
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
       stage.removeEventListener("pointermove", onPointerMove);
       stage.removeEventListener("pointerdown", onPointerDown);
       stage.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
   return (
-    <section className="hero" id="top" ref={stageRef} data-stage="4" data-engaged="false">
+    <section className="hero" id="top" ref={stageRef} data-stage="0" data-engaged="false">
       <div className="signal-probe" aria-hidden="true"><i /></div>
 
       <div className="hero-copy">
@@ -140,7 +153,7 @@ export default function SignalStage() {
         <span className="chromatic-rule" aria-hidden="true" />
         <p className="hero-intro">硬件、系统、AI。持续试验。</p>
         <div className="hero-actions">
-          <a className="primary-button" href="#work">浏览项目 / EXPLORE <b>↘</b></a>
+          <a className="hero-link" href="#work">浏览项目 / EXPLORE <b>↓</b></a>
           <a className="text-link" href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">github.com/TT1nKer ↗</a>
         </div>
       </div>
@@ -151,7 +164,6 @@ export default function SignalStage() {
         aria-label="扰动 TT1nKer 信号"
         onClick={() => disturb(1)}
       >
-        <span>PROBE / TAP TO DISTURB</span>
         <Image
           src="/icon-tt-question-transparent-v2.png"
           alt=""

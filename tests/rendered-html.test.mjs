@@ -31,17 +31,16 @@ test("renders the authored portfolio instead of starter or template copy", async
   const html = await response.text();
   assert.match(html, /<title>TT1nKer<\/title>/i);
   assert.match(html, /TT1NKER\./);
-  assert.match(html, /PROJECTS\./);
-  assert.match(html, /LOCAL FIRST\./);
+  assert.match(html, /OWN REPOSITORIES/);
+  assert.match(html, /CURRENT/);
   assert.match(html, /chatcommons/);
-  assert.match(html, /opensender/);
-  assert.match(html, /39 \/ 39 TESTS/);
-  assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SEND IT MY WAY|RECENT WORK/i);
+  assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SEND IT MY WAY|RECENT WORK|LOCAL FIRST/i);
 });
 
-test("ships a causal input system with cleanup and reduced-motion coverage", async () => {
-  const [stage, glitch, css, page] = await Promise.all([
+test("ships causal hero and scroll-stage systems with cleanup and reduced-motion coverage", async () => {
+  const [stage, sequence, glitch, css, page] = await Promise.all([
     readFile(new URL("../app/SignalStage.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/ProjectSequence.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GlitchTitle.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -52,10 +51,19 @@ test("ships a causal input system with cleanup and reduced-motion coverage", asy
   assert.match(stage, /cancelAnimationFrame/);
   assert.match(stage, /prefers-reduced-motion/);
   assert.match(stage, /removeEventListener/);
+  assert.match(sequence, /position|requestAnimationFrame/);
+  assert.match(sequence, /OWN REPOSITORIES/);
+  assert.match(sequence, /opensender/);
+  assert.match(sequence, /39 \/ 39 TESTS/);
+  assert.match(sequence, /prefers-reduced-motion/);
+  assert.match(sequence, /project-static/);
+  assert.match(sequence, /removeEventListener/);
   assert.match(glitch, /ttinker:disturb/);
   assert.match(glitch, /between\(5200,\s*14800\)/);
+  assert.match(css, /\.project-stage\s*\{[^}]*position:\s*sticky/s);
   assert.match(css, /@media \(max-width:\s*760px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
-  assert.match(page, /OWN REPOSITORIES/);
+  assert.match(page, /ProjectSequence/);
+  assert.doesNotMatch(page, /field-strip|project-grid/);
   assert.doesNotMatch(page, /\bai-town\b|\bopenclaw\b|\bMaaFramework\b/);
 });

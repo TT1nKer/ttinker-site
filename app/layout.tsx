@@ -22,13 +22,13 @@ export const metadata: Metadata = {
     description: "Hardware, systems, AI — question-driven experiments.",
     type: "website",
     url: "/",
-    images: [{ url: "/og.png", width: 1729, height: 910, alt: "TT1nKer" }],
+    images: [{ url: "/og-scroll-stage.png", width: 1672, height: 941, alt: "TT1nKer" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "TT1nKer",
     description: "Hardware, systems, AI — question-driven experiments.",
-    images: ["/og.png"],
+    images: ["/og-scroll-stage.png"],
   },
 };
 
