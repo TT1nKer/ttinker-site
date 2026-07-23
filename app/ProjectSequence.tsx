@@ -161,11 +161,7 @@ export default function ProjectSequence() {
   const renderProject = (item: Project) => (
     <article
       className="project-focus"
-      data-linked={
-        item.signal === "mesh" || item.signal === "transfer" || item.signal === "field"
-          ? "continuum"
-          : undefined
-      }
+      data-linked="continuum"
       key={item.name}
     >
       <div className="project-copy">

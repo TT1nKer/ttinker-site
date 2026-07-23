@@ -449,6 +449,117 @@ function drawAdaptiveField(
   dot(context, pointer, 18 + engaged * 8, CORAL, engaged * .08);
 }
 
+function eGraphNodes(width: number, height: number) {
+  const unit = Math.min(width, height);
+  const classes = [
+    { x: .22, y: .5, rx: .11, ry: .16 },
+    { x: .47, y: .29, rx: .105, ry: .13 },
+    { x: .47, y: .71, rx: .105, ry: .13 },
+    { x: .72, y: .5, rx: .11, ry: .16 },
+  ];
+  return classes.flatMap((group, groupIndex) =>
+    Array.from({ length: 7 }, (_, index) => {
+      const angle = index / 7 * Math.PI * 2 + groupIndex * .22;
+      return {
+        x: group.x * width + Math.cos(angle) * group.rx * unit,
+        y: group.y * height + Math.sin(angle) * group.ry * unit,
+      };
+    }),
+  );
+}
+
+function drawEGraphScaffold(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+  nodes: Point[],
+  alpha = 1,
+) {
+  const lutMode = engaged > .08 && pointer.y > height * .5;
+  const unit = Math.min(width, height);
+  const input = { x: width * .055, y: height * .5 };
+  const output = { x: width * .925, y: height * .5 };
+  const groups = [
+    { x: .22, y: .5, rx: .14, ry: .21 },
+    { x: .47, y: .29, rx: .135, ry: .17 },
+    { x: .47, y: .71, rx: .135, ry: .17 },
+    { x: .72, y: .5, rx: .14, ry: .21 },
+  ];
+  const upperPath = [input, nodes[3], nodes[0], nodes[10], nodes[7], nodes[24], nodes[21], output];
+  const lowerPath = [input, nodes[3], nodes[0], nodes[17], nodes[14], nodes[24], nodes[21], output];
+  const selectedPath = lutMode ? lowerPath : upperPath;
+  const alternatePath = lutMode ? upperPath : lowerPath;
+  const selectedColor = lutMode ? CYAN : CORAL;
+
+  groups.forEach((group, groupIndex) => {
+    context.save();
+    context.strokeStyle = INK;
+    context.globalAlpha = .18 * alpha;
+    context.setLineDash([3, 5]);
+    context.beginPath();
+    context.ellipse(
+      group.x * width,
+      group.y * height,
+      group.rx * unit,
+      group.ry * unit,
+      0,
+      0,
+      Math.PI * 2,
+    );
+    context.stroke();
+    context.setLineDash([]);
+    context.fillStyle = INK;
+    context.globalAlpha = .42 * alpha;
+    context.font = "650 7px monospace";
+    context.fillText(`e${groupIndex}`, group.x * width - 6, group.y * height - group.ry * unit - 9);
+    context.restore();
+
+    const groupNodes = nodes.slice(groupIndex * 7, groupIndex * 7 + 7);
+    groupNodes.forEach((node, index) => {
+      line(
+        context,
+        node,
+        groupNodes[(index + 1) % groupNodes.length],
+        INK,
+        .08 * alpha,
+      );
+    });
+  });
+
+  alternatePath.slice(0, -1).forEach((point, index) => {
+    line(context, point, alternatePath[index + 1], INK, .09 * alpha);
+  });
+  selectedPath.slice(0, -1).forEach((point, index) => {
+    const next = selectedPath[index + 1];
+    line(context, point, next, selectedColor, .68 * alpha, 1.5);
+    pulseOnLine(
+      context,
+      point,
+      next,
+      (time * .15 + index * .17) % 1,
+      selectedColor,
+      2.2 * alpha,
+    );
+  });
+
+  context.save();
+  context.globalAlpha = alpha;
+  context.fillStyle = INK;
+  context.fillRect(input.x - 8, input.y - 3, 16, 6);
+  context.strokeStyle = selectedColor;
+  context.globalAlpha = .82 * alpha;
+  context.strokeRect(output.x - 23, output.y - 12, 46, 24);
+  context.fillStyle = INK;
+  context.globalAlpha = .6 * alpha;
+  context.font = "650 7px monospace";
+  context.fillText("IR", input.x - 6, input.y - 10);
+  context.fillText(lutMode ? "LUT" : "DSP", output.x - 10, output.y + 3);
+  context.restore();
+}
+
 function drawDatapath(
   context: CanvasRenderingContext2D,
   width: number,
@@ -457,87 +568,62 @@ function drawDatapath(
   pointer: Point,
   engaged: number,
 ) {
-  const inputs = [.27, .5, .73].map((y) => ({ x: width * .09, y: height * y }));
-  const graph = [
-    { x: .34, y: .29, label: "+" },
-    { x: .34, y: .67, label: "×" },
-    { x: .49, y: .2, label: "≡" },
-    { x: .49, y: .48, label: "+" },
-    { x: .49, y: .77, label: "≡" },
-    { x: .64, y: .34, label: "×" },
-    { x: .64, y: .66, label: "+" },
-  ].map((node) => ({ ...node, x: node.x * width, y: node.y * height }));
-  const outputs = [
-    { x: width * .89, y: height * .36, label: "DSP" },
-    { x: width * .89, y: height * .65, label: "LUT" },
-  ];
+  const nodes = eGraphNodes(width, height);
+  drawEGraphScaffold(context, width, height, time, pointer, engaged, nodes);
   const lutMode = engaged > .08 && pointer.y > height * .5;
-  const selected = lutMode ? [1, 4, 6] : [0, 2, 5];
-  const edges = [
-    [inputs[0], graph[0]], [inputs[1], graph[0]], [inputs[1], graph[1]],
-    [inputs[2], graph[1]], [graph[0], graph[2]], [graph[0], graph[3]],
-    [graph[1], graph[3]], [graph[1], graph[4]], [graph[2], graph[5]],
-    [graph[3], graph[5]], [graph[3], graph[6]], [graph[4], graph[6]],
-    [graph[5], outputs[0]], [graph[6], outputs[1]],
-  ] as const;
-
-  edges.forEach(([from, to], index) => {
-    const highlighted = lutMode
-      ? [2, 3, 7, 11, 13].includes(index)
-      : [0, 1, 4, 8, 12].includes(index);
-    line(
+  const selected = new Set(lutMode ? [3, 0, 17, 14, 24, 21] : [3, 0, 10, 7, 24, 21]);
+  nodes.forEach((node, index) => {
+    dot(
       context,
-      from,
-      to,
-      highlighted ? (lutMode ? CYAN : CORAL) : INK,
-      highlighted ? .62 : .12,
-      highlighted ? 1.5 : 1,
+      node,
+      selected.has(index) ? 3.5 : 2.15,
+      selected.has(index) ? (lutMode ? CYAN : CORAL) : INK,
+      selected.has(index) ? .92 : .5,
     );
-    if (highlighted) {
-      pulseOnLine(
-        context,
-        from,
-        to,
-        (time * .18 + index * .13) % 1,
-        lutMode ? CYAN : CORAL,
-        2.3,
-      );
-    }
   });
+}
 
-  inputs.forEach((point, index) => {
-    context.save();
-    context.fillStyle = INK;
-    context.globalAlpha = .72;
-    context.fillRect(point.x - 10, point.y - 4, 20, 8);
-    context.font = "600 7px monospace";
-    context.fillText(String.fromCharCode(97 + index), point.x - 2, point.y - 10);
-    context.restore();
+function drawFieldEGraphMorph(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+  morph: number,
+) {
+  const source = adaptiveNodes(width, height, time, pointer, engaged * (1 - morph));
+  const target = eGraphNodes(width, height);
+  const nodes = source.map((point, index) => ({
+    x: mix(point.x, target[index].x, morph),
+    y: mix(point.y, target[index].y, morph),
+  }));
+  const networkAlpha = 1 - smoothstep(.08, .72, morph);
+  const classAlpha = smoothstep(.3, .94, morph);
+  drawAdaptiveEdges(context, nodes, width, networkAlpha);
+  drawEGraphScaffold(
+    context,
+    width,
+    height,
+    time,
+    pointer,
+    engaged,
+    nodes,
+    classAlpha,
+  );
+  const lutMode = engaged > .08 && pointer.y > height * .5;
+  const selected = new Set(lutMode ? [3, 0, 17, 14, 24, 21] : [3, 0, 10, 7, 24, 21]);
+  nodes.forEach((node, index) => {
+    const active = selected.has(index);
+    dot(
+      context,
+      node,
+      mix(index % 7 === 0 ? 4 : 2.2, active ? 3.5 : 2.15, morph),
+      active && classAlpha > .4 ? (lutMode ? CYAN : CORAL) : index % 3 === 0 ? BLUE : INK,
+      active ? .9 : mix(.78, .5, morph),
+    );
   });
-
-  graph.forEach((node, index) => {
-    const active = selected.includes(index);
-    dot(context, node, active ? 10 : 7, active ? (lutMode ? CYAN : CORAL) : INK, active ? .13 : .05);
-    dot(context, node, 3, active ? (lutMode ? CYAN : CORAL) : INK, .9);
-    context.save();
-    context.fillStyle = INK;
-    context.globalAlpha = .6;
-    context.font = "600 8px monospace";
-    context.fillText(node.label, node.x + 9, node.y + 3);
-    context.restore();
-  });
-
-  outputs.forEach((node, index) => {
-    const active = index === (lutMode ? 1 : 0);
-    context.save();
-    context.strokeStyle = active ? (lutMode ? CYAN : CORAL) : INK;
-    context.globalAlpha = active ? .82 : .2;
-    context.strokeRect(node.x - 23, node.y - 12, 46, 24);
-    context.fillStyle = INK;
-    context.font = "650 8px monospace";
-    context.fillText(node.label, node.x - 10, node.y + 3);
-    context.restore();
-  });
+  dot(context, pointer, 18 + engaged * 8, CORAL, engaged * networkAlpha * .08);
 }
 
 function drawOrbitTransfer(
@@ -842,6 +928,367 @@ function drawMarketFilter(
   }
 }
 
+type CanvasLayer = {
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+};
+
+function drawSignalState(
+  signal: Signal,
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+) {
+  if (signal === "field") drawAdaptiveField(context, width, height, time, pointer, engaged);
+  if (signal === "datapath") drawDatapath(context, width, height, time, pointer, engaged);
+  if (signal === "orbit") drawOrbitTransfer(context, width, height, time, pointer, engaged);
+  if (signal === "timer") drawFocusPhases(context, width, height, time, pointer, engaged);
+  if (signal === "compiler") drawCompiler(context, width, height, time, pointer, engaged);
+  if (signal === "market") drawMarketFilter(context, width, height, time, pointer, engaged);
+}
+
+function signalPoints(
+  signal: Signal,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+) {
+  if (signal === "field") {
+    return adaptiveNodes(width, height, time, pointer, engaged);
+  }
+
+  if (signal === "datapath") {
+    return eGraphNodes(width, height);
+  }
+
+  if (signal === "orbit") {
+    const unit = Math.min(width, height);
+    const focus = { x: width * .39, y: height * .52 };
+    const inner = unit * .18;
+    const outer = unit * .34;
+    const semiMajor = (inner + outer) / 2;
+    const semiMinor = Math.sqrt(inner * outer);
+    const centerX = focus.x + (outer - inner) / 2;
+    return Array.from({ length: 28 }, (_, index) => {
+      if (index < 10) {
+        const angle = index / 10 * Math.PI * 2 + time * .025;
+        return {
+          x: focus.x + Math.cos(angle) * inner,
+          y: focus.y + Math.sin(angle) * inner,
+        };
+      }
+      if (index < 20) {
+        const angle = (index - 10) / 10 * Math.PI * 2 - time * .018;
+        return {
+          x: focus.x + Math.cos(angle) * outer,
+          y: focus.y + Math.sin(angle) * outer,
+        };
+      }
+      const angle = Math.PI + (index - 20) / 7 * Math.PI;
+      return {
+        x: centerX + Math.cos(angle) * semiMajor,
+        y: focus.y + Math.sin(angle) * semiMinor,
+      };
+    });
+  }
+
+  if (signal === "timer") {
+    const center = { x: width * .5, y: height * .45 };
+    const radius = Math.min(width, height) * .24;
+    return Array.from({ length: 28 }, (_, index) => {
+      const angle = index / 28 * Math.PI * 2 - Math.PI / 2;
+      return {
+        x: center.x + Math.cos(angle) * radius,
+        y: center.y + Math.sin(angle) * radius,
+      };
+    });
+  }
+
+  if (signal === "compiler") {
+    const stages = [.12, .37, .62, .87];
+    return Array.from({ length: 28 }, (_, index) => {
+      const stage = Math.floor(index / 7);
+      const row = index % 7;
+      const span = height * (.52 - stage * .07);
+      return {
+        x: stages[stage] * width,
+        y: height * .5 - span / 2 + row / 6 * span,
+      };
+    });
+  }
+
+  return Array.from({ length: 28 }, (_, index) => {
+    const trace = Math.floor(index / 7);
+    const sample = index % 7;
+    const progress = sample / 6;
+    return {
+      x: mix(width * .08, width * .62, progress),
+      y:
+        height * (.25 + trace * .16) +
+        Math.sin(progress * 7 + trace * 1.3 + time * .16) * (8 + trace * 2),
+    };
+  });
+}
+
+function drawCalibrationBridge(
+  context: CanvasRenderingContext2D,
+  sourceLayer: CanvasLayer,
+  targetLayer: CanvasLayer,
+  source: Signal,
+  target: Signal,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+  progress: number,
+) {
+  sourceLayer.context.clearRect(0, 0, width, height);
+  targetLayer.context.clearRect(0, 0, width, height);
+  drawSignalState(source, sourceLayer.context, width, height, time, pointer, engaged);
+  drawSignalState(target, targetLayer.context, width, height, time, pointer, engaged * progress);
+
+  const collapse = smoothstep(.06, .48, progress);
+  const reveal = smoothstep(.52, .94, progress);
+  const sourceHeight = Math.max(.5, height * (1 - collapse));
+  const revealHeight = height * reveal;
+
+  if (collapse < 1) {
+    context.save();
+    context.globalAlpha = 1 - smoothstep(.34, .5, progress);
+    context.drawImage(
+      sourceLayer.canvas,
+      0,
+      0,
+      sourceLayer.canvas.width,
+      sourceLayer.canvas.height,
+      0,
+      height * .5 - sourceHeight * .5,
+      width,
+      sourceHeight,
+    );
+    context.restore();
+  }
+
+  if (reveal > 0) {
+    context.save();
+    context.beginPath();
+    context.rect(0, height * .5 - revealHeight * .5, width, revealHeight);
+    context.clip();
+    context.globalAlpha = smoothstep(.52, .74, progress);
+    context.drawImage(
+      targetLayer.canvas,
+      0,
+      0,
+      targetLayer.canvas.width,
+      targetLayer.canvas.height,
+      0,
+      0,
+      width,
+      height,
+    );
+    context.restore();
+  }
+
+  const lineAlpha = Math.pow(Math.sin(progress * Math.PI), .7);
+  const angle = mix(0, target === "orbit" ? -.075 : .045, progress);
+  context.save();
+  context.translate(width * .5, height * .5);
+  context.rotate(angle);
+  line(
+    context,
+    { x: -width * .42, y: 0 },
+    { x: width * .42, y: 0 },
+    INK,
+    lineAlpha * .55,
+    1,
+  );
+  line(
+    context,
+    { x: -width * .16, y: -2 },
+    { x: width * .12, y: -2 },
+    CORAL,
+    lineAlpha * .9,
+    2,
+  );
+  line(
+    context,
+    { x: width * .12, y: 2 },
+    { x: width * .31, y: 2 },
+    CYAN,
+    lineAlpha * .85,
+    2,
+  );
+  for (let tick = -4; tick <= 4; tick += 1) {
+    line(
+      context,
+      { x: tick * width * .08, y: -4 },
+      { x: tick * width * .08, y: 4 },
+      INK,
+      lineAlpha * .25,
+    );
+  }
+  context.restore();
+}
+
+function drawOrbitTimerMorph(
+  context: CanvasRenderingContext2D,
+  sourceLayer: CanvasLayer,
+  targetLayer: CanvasLayer,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+  progress: number,
+) {
+  sourceLayer.context.clearRect(0, 0, width, height);
+  targetLayer.context.clearRect(0, 0, width, height);
+  drawSignalState("orbit", sourceLayer.context, width, height, time, pointer, engaged);
+  drawSignalState("timer", targetLayer.context, width, height, time, pointer, engaged * progress);
+
+  context.save();
+  context.globalAlpha = 1 - smoothstep(.04, .38, progress);
+  context.drawImage(
+    sourceLayer.canvas,
+    0,
+    0,
+    sourceLayer.canvas.width,
+    sourceLayer.canvas.height,
+    0,
+    0,
+    width,
+    height,
+  );
+  context.globalAlpha = smoothstep(.62, .96, progress);
+  context.drawImage(
+    targetLayer.canvas,
+    0,
+    0,
+    targetLayer.canvas.width,
+    targetLayer.canvas.height,
+    0,
+    0,
+    width,
+    height,
+  );
+  context.restore();
+
+  const source = signalPoints("orbit", width, height, time, pointer, engaged);
+  const center = { x: width * .5, y: height * .45 };
+  const radius = Math.min(width, height) * .24;
+  const target = source.map((point, index) => {
+    const fallbackAngle = index / source.length * Math.PI * 2 - Math.PI / 2;
+    const distance = Math.hypot(point.x - center.x, point.y - center.y);
+    const angle = distance > 2
+      ? Math.atan2(point.y - center.y, point.x - center.x)
+      : fallbackAngle;
+    return {
+      x: center.x + Math.cos(angle) * radius,
+      y: center.y + Math.sin(angle) * radius,
+    };
+  });
+  const nodes = source.map((point, index) => ({
+    x: mix(point.x, target[index].x, progress),
+    y: mix(point.y, target[index].y, progress),
+  }));
+  const alpha = Math.pow(Math.sin(progress * Math.PI), .5);
+  const groups = [
+    { start: 0, end: 10, closed: true },
+    { start: 10, end: 20, closed: true },
+    { start: 20, end: 28, closed: false },
+  ];
+
+  groups.forEach((group, groupIndex) => {
+    for (let index = group.start; index < group.end - 1; index += 1) {
+      line(context, nodes[index], nodes[index + 1], INK, alpha * .24);
+    }
+    if (group.closed) {
+      line(context, nodes[group.end - 1], nodes[group.start], INK, alpha * .24);
+    }
+    nodes.slice(group.start, group.end).forEach((node, localIndex) => {
+      const color = localIndex === 0
+        ? [CORAL, CYAN, LIME][groupIndex]
+        : INK;
+      dot(context, node, localIndex === 0 ? 3.6 : 2, color, alpha * .78);
+    });
+  });
+}
+
+function drawCompilerMarketMorph(
+  context: CanvasRenderingContext2D,
+  sourceLayer: CanvasLayer,
+  targetLayer: CanvasLayer,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+  progress: number,
+) {
+  sourceLayer.context.clearRect(0, 0, width, height);
+  targetLayer.context.clearRect(0, 0, width, height);
+  drawSignalState("compiler", sourceLayer.context, width, height, time, pointer, engaged);
+  drawSignalState("market", targetLayer.context, width, height, time, pointer, engaged * progress);
+
+  context.save();
+  context.globalAlpha = 1 - smoothstep(.04, .38, progress);
+  context.drawImage(
+    sourceLayer.canvas,
+    0,
+    0,
+    sourceLayer.canvas.width,
+    sourceLayer.canvas.height,
+    0,
+    0,
+    width,
+    height,
+  );
+  context.globalAlpha = smoothstep(.62, .96, progress);
+  context.drawImage(
+    targetLayer.canvas,
+    0,
+    0,
+    targetLayer.canvas.width,
+    targetLayer.canvas.height,
+    0,
+    0,
+    width,
+    height,
+  );
+  context.restore();
+
+  const source = signalPoints("compiler", width, height, time, pointer, engaged);
+  const target = signalPoints("market", width, height, time, pointer, engaged);
+  const nodes = source.map((point, index) => ({
+    x: mix(point.x, target[index].x, progress),
+    y: mix(point.y, target[index].y, progress),
+  }));
+  const alpha = Math.pow(Math.sin(progress * Math.PI), .5);
+  const colors = [CORAL, CYAN, BLUE, INK];
+
+  for (let group = 0; group < 4; group += 1) {
+    const start = group * 7;
+    for (let index = start; index < start + 6; index += 1) {
+      line(context, nodes[index], nodes[index + 1], colors[group], alpha * .5, group === 3 ? 1 : 1.35);
+    }
+    nodes.slice(start, start + 7).forEach((node, index) => {
+      dot(
+        context,
+        node,
+        index === 0 || index === 6 ? 3.2 : 1.9,
+        colors[group],
+        alpha * .82,
+      );
+    });
+  }
+}
+
 export default function ProjectVisual({ signal }: { signal: Signal }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0, engaged: 0 });
@@ -855,6 +1302,13 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const pointer = pointerRef.current;
     const sequence = canvas.closest<HTMLElement>(".project-sequence");
+    const sourceLayerCanvas = document.createElement("canvas");
+    const targetLayerCanvas = document.createElement("canvas");
+    const sourceLayerContext = sourceLayerCanvas.getContext("2d");
+    const targetLayerContext = targetLayerCanvas.getContext("2d");
+    if (!sourceLayerContext || !targetLayerContext) return;
+    const sourceLayer = { canvas: sourceLayerCanvas, context: sourceLayerContext };
+    const targetLayer = { canvas: targetLayerCanvas, context: targetLayerContext };
     let width = 1;
     let height = 1;
     let frame = 0;
@@ -869,6 +1323,11 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      [sourceLayer, targetLayer].forEach((layer) => {
+        layer.canvas.width = Math.round(width * ratio);
+        layer.canvas.height = Math.round(height * ratio);
+        layer.context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      });
     };
 
     const draw = (timeMs: number) => {
@@ -905,11 +1364,74 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
           reduced ? 0 : smoothstep(.48, .98, localProgress),
         );
       }
-      if (signal === "field") drawAdaptiveField(context, width, height, time, pointer, pointer.engaged);
-      if (signal === "datapath") drawDatapath(context, width, height, time, pointer, pointer.engaged);
-      if (signal === "orbit") drawOrbitTransfer(context, width, height, time, pointer, pointer.engaged);
-      if (signal === "timer") drawFocusPhases(context, width, height, time, pointer, pointer.engaged);
-      if (signal === "compiler") drawCompiler(context, width, height, time, pointer, pointer.engaged);
+      const transition = reduced ? 0 : smoothstep(.48, .98, localProgress);
+      if (signal === "field") {
+        drawFieldEGraphMorph(
+          context,
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          transition,
+        );
+      }
+      if (signal === "datapath") {
+        drawCalibrationBridge(
+          context,
+          sourceLayer,
+          targetLayer,
+          "datapath",
+          "orbit",
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          transition,
+        );
+      }
+      if (signal === "orbit") {
+        drawOrbitTimerMorph(
+          context,
+          sourceLayer,
+          targetLayer,
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          transition,
+        );
+      }
+      if (signal === "timer") {
+        drawCalibrationBridge(
+          context,
+          sourceLayer,
+          targetLayer,
+          "timer",
+          "compiler",
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          transition,
+        );
+      }
+      if (signal === "compiler") {
+        drawCompilerMarketMorph(
+          context,
+          sourceLayer,
+          targetLayer,
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          transition,
+        );
+      }
       if (signal === "market") drawMarketFilter(context, width, height, time, pointer, pointer.engaged);
 
       if (!reduced) frame = requestAnimationFrame(draw);
