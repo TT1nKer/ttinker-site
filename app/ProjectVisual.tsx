@@ -25,6 +25,11 @@ const clamp = (value: number, min = 0, max = 1) =>
 
 const mix = (a: number, b: number, amount: number) => a + (b - a) * amount;
 
+const smoothstep = (from: number, to: number, value: number) => {
+  const amount = clamp((value - from) / Math.max(.0001, to - from));
+  return amount * amount * (3 - 2 * amount);
+};
+
 const line = (
   context: CanvasRenderingContext2D,
   from: Point,
@@ -80,13 +85,14 @@ const pulseOnLine = (
   );
 };
 
-function drawCommunities(
+function drawProtocolMorph(
   context: CanvasRenderingContext2D,
   width: number,
   height: number,
   time: number,
   pointer: Point,
   engaged: number,
+  morph: number,
 ) {
   const clusters = [
     { x: .24, y: .29, count: 7, radius: .105 },
@@ -105,6 +111,21 @@ function drawCommunities(
     },
     { index: 0, distance: Infinity },
   ).index;
+  const communityAlpha = 1 - smoothstep(.08, .72, morph);
+  const channelAlpha = smoothstep(.28, .92, morph);
+  const packetMotion = smoothstep(.78, 1, morph);
+  const gate = mix(
+    width * .54,
+    width * .59,
+    engaged * clamp(pointer.x / width) * channelAlpha,
+  );
+  const nodes: Array<{
+    start: Point;
+    end: Point;
+    clusterIndex: number;
+    globalIndex: number;
+    lane: number;
+  }> = [];
 
   clusters.forEach((cluster, clusterIndex) => {
     const center = centers[clusterIndex];
@@ -113,30 +134,59 @@ function drawCommunities(
 
     context.save();
     context.strokeStyle = INK;
-    context.globalAlpha = .11 + active * .13;
+    context.globalAlpha = (.11 + active * .13) * communityAlpha;
     context.lineWidth = 1;
     context.beginPath();
     context.arc(center.x, center.y, orbit * (1.42 + active * .08), 0, Math.PI * 2);
     context.stroke();
     context.restore();
 
-    const nodes = Array.from({ length: cluster.count }, (_, index) => {
+    const clusterNodes = Array.from({ length: cluster.count }, (_, index) => {
       const angle =
         (index / cluster.count) * Math.PI * 2 +
         clusterIndex * .47 +
-        Math.sin(time * .45 + index * 1.7) * .035;
+        Math.sin(time * .45 + index * 1.7) * .035 * communityAlpha;
+      const globalIndex = nodes.length + index;
+      const lane = globalIndex % 5;
+      const slot = Math.floor(globalIndex / 5);
+      const staticProgress = clamp((slot + (lane % 2) * .32) / 5.35);
+      const movingProgress =
+        (time * (.068 + lane * .004) + globalIndex * .173) % 1;
+      const transferProgress = mix(staticProgress, movingProgress, packetMotion);
+
       return {
-        x: center.x + Math.cos(angle) * orbit,
-        y: center.y + Math.sin(angle) * orbit,
+        start: {
+          x: center.x + Math.cos(angle) * orbit,
+          y: center.y + Math.sin(angle) * orbit,
+        },
+        end: {
+          x: mix(width * .1, width * .9, transferProgress),
+          y: height * (.24 + lane * .13),
+        },
+        clusterIndex,
+        globalIndex,
+        lane,
       };
     });
 
-    nodes.forEach((node, index) => {
-      line(context, node, nodes[(index + 1) % nodes.length], INK, .18 + active * .12);
-      line(context, node, center, INK, .1 + active * .08);
-      dot(context, node, 2.4 + active * .7, clusterIndex % 2 ? CYAN : CORAL, .82);
+    clusterNodes.forEach((node, index) => {
+      line(
+        context,
+        node.start,
+        clusterNodes[(index + 1) % clusterNodes.length].start,
+        INK,
+        (.18 + active * .12) * communityAlpha,
+      );
+      line(
+        context,
+        node.start,
+        center,
+        INK,
+        (.1 + active * .08) * communityAlpha,
+      );
     });
-    dot(context, center, 3.7, INK, .9);
+    dot(context, center, 3.7, INK, .9 * communityAlpha);
+    nodes.push(...clusterNodes);
   });
 
   const bridges = [
@@ -151,7 +201,13 @@ function drawCommunities(
     const selected = fromIndex === nearest || toIndex === nearest;
     context.save();
     context.setLineDash([3, 7]);
-    line(context, from, to, selected ? CORAL : INK, selected ? .42 : .13);
+    line(
+      context,
+      from,
+      to,
+      selected ? CORAL : INK,
+      (selected ? .42 : .13) * communityAlpha,
+    );
     context.restore();
     pulseOnLine(
       context,
@@ -159,42 +215,19 @@ function drawCommunities(
       to,
       (time * (.075 + index * .008) + index * .21) % 1,
       selected ? CORAL : CYAN,
-      selected ? 3.2 : 2.1,
+      (selected ? 3.2 : 2.1) * communityAlpha,
     );
   });
-}
 
-function drawTransfer(
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  time: number,
-  pointer: Point,
-  engaged: number,
-) {
-  const gate = mix(width * .46, width * .59, engaged * clamp(pointer.x / width));
-  const lanes = 5;
-
-  for (let lane = 0; lane < lanes; lane += 1) {
+  for (let lane = 0; lane < 5; lane += 1) {
     const y = height * (.24 + lane * .13);
-    line(context, { x: width * .09, y }, { x: gate - 16, y }, INK, .16);
-    line(context, { x: gate + 18, y }, { x: width * .91, y }, INK, .16);
-
-    for (let packet = 0; packet < 4; packet += 1) {
-      const progress = (time * (.075 + lane * .006) + packet * .28 + lane * .07) % 1;
-      const x = mix(width * .1, width * .9, progress);
-      if (Math.abs(x - gate) < 20) continue;
-      context.save();
-      context.fillStyle = x > gate ? CYAN : CORAL;
-      context.globalAlpha = x > gate ? .88 : .6;
-      context.fillRect(x - 7, y - 2, 14, 4);
-      context.restore();
-    }
+    line(context, { x: width * .09, y }, { x: gate - 16, y }, INK, .16 * channelAlpha);
+    line(context, { x: gate + 18, y }, { x: width * .91, y }, INK, .16 * channelAlpha);
   }
 
   context.save();
   context.strokeStyle = INK;
-  context.globalAlpha = .32;
+  context.globalAlpha = .32 * channelAlpha;
   context.beginPath();
   context.arc(gate, height * .5, 22 + engaged * 8, -.7, Math.PI * 1.25);
   context.stroke();
@@ -204,7 +237,7 @@ function drawTransfer(
     { x: gate - 6, y: height * .5 + 3 },
     { x: gate, y: height * .5 + 9 },
     LIME,
-    .9,
+    .9 * channelAlpha,
     2,
   );
   line(
@@ -212,9 +245,42 @@ function drawTransfer(
     { x: gate, y: height * .5 + 9 },
     { x: gate + 11, y: height * .5 - 8 },
     LIME,
-    .9,
+    .9 * channelAlpha,
     2,
   );
+
+  nodes.forEach((node) => {
+    const point = {
+      x: mix(node.start.x, node.end.x, morph),
+      y: mix(node.start.y, node.end.y, morph),
+    };
+    const nearGate = Math.abs(point.x - gate) < 20;
+    const color = morph < .5
+      ? (node.clusterIndex % 2 ? CYAN : CORAL)
+      : (point.x > gate ? CYAN : CORAL);
+
+    dot(
+      context,
+      point,
+      2.4 + (node.clusterIndex === nearest ? engaged * .7 : 0),
+      color,
+      (.82 - channelAlpha * .3) * (nearGate ? .18 : 1),
+    );
+    if (channelAlpha > .04) {
+      context.save();
+      context.fillStyle = color;
+      context.globalAlpha = channelAlpha * (nearGate ? .12 : .74);
+      const packetWidth = mix(3, 14, channelAlpha);
+      const packetHeight = mix(3, 4, channelAlpha);
+      context.fillRect(
+        point.x - packetWidth / 2,
+        point.y - packetHeight / 2,
+        packetWidth,
+        packetHeight,
+      );
+      context.restore();
+    }
+  });
 }
 
 function drawAdaptiveField(
@@ -662,6 +728,7 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const pointer = pointerRef.current;
+    const sequence = canvas.closest<HTMLElement>(".project-sequence");
     let width = 1;
     let height = 1;
     let frame = 0;
@@ -687,8 +754,23 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
       context.clearRect(0, 0, width, height);
 
       const time = reduced ? 2.8 : timeMs / 1000;
-      if (signal === "mesh") drawCommunities(context, width, height, time, pointer, pointer.engaged);
-      if (signal === "transfer") drawTransfer(context, width, height, time, pointer, pointer.engaged);
+      const localProgress = Number.parseFloat(
+        sequence?.style.getPropertyValue("--project-local") || "0",
+      );
+      if (signal === "mesh") {
+        drawProtocolMorph(
+          context,
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          reduced ? 0 : smoothstep(.48, .98, localProgress),
+        );
+      }
+      if (signal === "transfer") {
+        drawProtocolMorph(context, width, height, time, pointer, pointer.engaged, 1);
+      }
       if (signal === "field") drawAdaptiveField(context, width, height, time, pointer, pointer.engaged);
       if (signal === "datapath") drawDatapath(context, width, height, time, pointer, pointer.engaged);
       if (signal === "orbit") drawOrbitTransfer(context, width, height, time, pointer, pointer.engaged);

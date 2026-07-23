@@ -159,7 +159,11 @@ export default function ProjectSequence() {
   const project = projects[activeIndex];
 
   const renderProject = (item: Project) => (
-    <article className="project-focus" key={item.name}>
+    <article
+      className="project-focus"
+      data-linked={item.signal === "mesh" || item.signal === "transfer" ? "protocol" : undefined}
+      key={item.name}
+    >
       <div className="project-copy">
         <p className="project-status">{item.area}</p>
         <h2>{item.name}</h2>

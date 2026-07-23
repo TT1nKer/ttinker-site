@@ -396,7 +396,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   overflow: hidden;
   padding: 34px 4.5vw 30px;
   background: #f0ede3;
-  transition: background-color .46s ease;
+  transition: background-color .68s cubic-bezier(.18, .75, .22, 1);
 }
 .project-stage[data-signal="mesh"] { background-color: #f0ede3; }
 .project-stage[data-signal="transfer"] { background-color: #e6eeed; }
@@ -553,6 +553,15 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   animation: project-switch-forward .52s cubic-bezier(.18, .75, .22, 1) both;
 }
 .project-sequence[data-direction="backward"] .project-focus {
+  animation-name: project-switch-backward;
+}
+.project-focus[data-linked="protocol"] {
+  animation: none;
+}
+.project-focus[data-linked="protocol"] .project-copy {
+  animation: project-switch-forward .52s cubic-bezier(.18, .75, .22, 1) both;
+}
+.project-sequence[data-direction="backward"] .project-focus[data-linked="protocol"] .project-copy {
   animation-name: project-switch-backward;
 }
 .project-focus .project-copy {
@@ -895,7 +904,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   .project-copy { position: relative; z-index: 3; }
   .project-copy h2 {
     max-width: 94vw;
-    font-size: clamp(48px, 16vw, 72px);
+    font-size: clamp(44px, 14vw, 68px);
     line-height: .86;
   }
   .project-description {
