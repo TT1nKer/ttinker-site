@@ -189,7 +189,7 @@ export default function ProjectSequence() {
       <section className="project-static" id="work">
         <p>[ 01 / OWN REPOSITORIES ]</p>
         {projects.map((item) => (
-          <article key={item.name}>
+          <article key={item.name} data-signal={item.signal}>
             <span>{item.index} / {item.area}</span>
             <h2>{item.name}</h2>
             <p>{item.description}</p>
@@ -216,6 +216,17 @@ export default function ProjectSequence() {
         data-signal={project.signal}
         style={{ "--active-index": activeIndex } as CSSProperties}
       >
+        <div
+          className="project-color-field"
+          data-signal={project.signal}
+          key={project.signal}
+          aria-hidden="true"
+        >
+          <i />
+          <i />
+          <i />
+        </div>
+
         <div className="project-tracker" aria-hidden="true">
           <div className="project-tracker-scale">
             {projects.map((item) => <i key={item.name} />)}

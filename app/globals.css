@@ -395,17 +395,280 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   min-height: 680px;
   overflow: hidden;
   padding: 34px 4.5vw 30px;
-  background: #f0ede3;
-  transition: background-color .46s ease;
+  background: #d8f1ed;
+  transition: background-color .68s cubic-bezier(.18, .75, .22, 1);
 }
-.project-stage[data-signal="mesh"] { background-color: #f0ede3; }
-.project-stage[data-signal="transfer"] { background-color: #e6eeed; }
-.project-stage[data-signal="field"] { background-color: #e9e8ef; }
-.project-stage[data-signal="datapath"] { background-color: #e5ebea; }
-.project-stage[data-signal="orbit"] { background-color: #e8e6ee; }
-.project-stage[data-signal="timer"] { background-color: #f0eadf; }
-.project-stage[data-signal="compiler"] { background-color: #eee9da; }
-.project-stage[data-signal="market"] { background-color: #e6ede7; }
+.project-stage[data-signal="mesh"] { background-color: #d8f1ed; }
+.project-stage[data-signal="transfer"] { background-color: #dfff55; }
+.project-stage[data-signal="field"] { background-color: #ded5ff; }
+.project-stage[data-signal="datapath"] { background-color: #ffe37c; }
+.project-stage[data-signal="orbit"] { background-color: #d7d4ff; }
+.project-stage[data-signal="timer"] { background-color: #ffe6c6; }
+.project-stage[data-signal="compiler"] { background-color: #d9f5a7; }
+.project-stage[data-signal="market"] { background-color: #ccebdc; }
+
+.project-color-field {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  animation: color-field-forward .76s cubic-bezier(.18, .75, .22, 1) both;
+}
+.project-sequence[data-direction="backward"] .project-color-field {
+  animation-name: color-field-backward;
+}
+.project-color-field i {
+  position: absolute;
+  display: block;
+}
+@keyframes color-field-forward {
+  from {
+    opacity: .5;
+    clip-path: inset(0 0 0 14%);
+    transform: translateX(2.5vw);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+}
+@keyframes color-field-backward {
+  from {
+    opacity: .5;
+    clip-path: inset(0 14% 0 0);
+    transform: translateX(-2.5vw);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+}
+
+/* 01 / community signal: optimistic, networked, slightly nocturnal. */
+.project-color-field[data-signal="mesh"] i:nth-child(1) {
+  inset: 0 52% 10% 0;
+  background: linear-gradient(145deg, #b9afff 0%, #d6a9f1 100%);
+  clip-path: polygon(0 0, 100% 0, 76% 100%, 0 86%);
+  opacity: .72;
+}
+.project-color-field[data-signal="mesh"] i:nth-child(2) {
+  top: 10%;
+  right: -5%;
+  width: 48%;
+  height: 70%;
+  background: linear-gradient(135deg, rgba(255, 93, 74, .72), rgba(33, 196, 207, .2));
+  clip-path: polygon(18% 0, 100% 12%, 78% 100%, 0 82%);
+}
+.project-color-field[data-signal="mesh"] i:nth-child(3) {
+  inset: 0;
+  background-image: radial-gradient(rgba(16, 16, 20, .26) .7px, transparent .8px);
+  background-size: 13px 13px;
+  opacity: .18;
+}
+
+/* 02 / transfer: acid speed field crossed by directional slabs. */
+.project-color-field[data-signal="transfer"] i:nth-child(1) {
+  top: 0;
+  right: -8%;
+  width: 64%;
+  height: 100%;
+  background: #ff7147;
+  clip-path: polygon(28% 0, 100% 0, 82% 100%, 0 100%);
+  opacity: .76;
+}
+.project-color-field[data-signal="transfer"] i:nth-child(2) {
+  left: 0;
+  bottom: 11%;
+  width: 54%;
+  height: 12%;
+  background: #21c4cf;
+  clip-path: polygon(0 0, 94% 0, 100% 100%, 8% 100%);
+  opacity: .74;
+}
+.project-color-field[data-signal="transfer"] i:nth-child(3) {
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(16, 16, 20, .09) 0 1px,
+    transparent 1px 42px
+  );
+}
+
+/* 03 / adaptive field: soft iridescence constrained by a moiré system. */
+.project-color-field[data-signal="field"] i:nth-child(1) {
+  inset: -22% -10% -20% 35%;
+  border-radius: 48%;
+  background:
+    radial-gradient(circle at 30% 35%, #ff82c7 0 15%, transparent 43%),
+    radial-gradient(circle at 68% 60%, #52dce5 0 19%, #7281ec 52%, transparent 72%);
+  opacity: .65;
+}
+.project-color-field[data-signal="field"] i:nth-child(2) {
+  left: -9%;
+  bottom: -18%;
+  width: 48%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9acb, #8fa5ff);
+  opacity: .38;
+}
+.project-color-field[data-signal="field"] i:nth-child(3) {
+  inset: 0;
+  background: repeating-radial-gradient(
+    circle at 76% 50%,
+    transparent 0 14px,
+    rgba(16, 16, 20, .09) 15px 16px
+  );
+}
+
+/* 04 / FPGA rewrite: large pixel blocks and a hard synthesis grid. */
+.project-color-field[data-signal="datapath"] i:nth-child(1) {
+  top: 13%;
+  right: 8%;
+  width: 38%;
+  height: 42%;
+  background: #5b63dc;
+  clip-path: polygon(0 0, 78% 0, 78% 14%, 100% 14%, 100% 84%, 62% 84%, 62% 100%, 0 100%);
+  opacity: .44;
+}
+.project-color-field[data-signal="datapath"] i:nth-child(2) {
+  right: 0;
+  bottom: 0;
+  width: 49%;
+  height: 27%;
+  background: #ff6245;
+  clip-path: polygon(17% 0, 100% 0, 100% 100%, 0 100%, 0 34%, 17% 34%);
+  opacity: .68;
+}
+.project-color-field[data-signal="datapath"] i:nth-child(3) {
+  inset: 0;
+  background:
+    linear-gradient(rgba(16, 16, 20, .09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 16, 20, .09) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* 05 / orbital sandbox: a luminous gradient body over a quiet star field. */
+.project-color-field[data-signal="orbit"] i:nth-child(1) {
+  inset: -24% -12% -26% 35%;
+  background: radial-gradient(
+    ellipse at 68% 52%,
+    rgba(255, 112, 87, .8) 0 9%,
+    rgba(174, 126, 238, .62) 28%,
+    rgba(82, 101, 216, .48) 50%,
+    transparent 72%
+  );
+}
+.project-color-field[data-signal="orbit"] i:nth-child(2) {
+  left: -12%;
+  top: 12%;
+  width: 43%;
+  height: 68%;
+  border-radius: 50%;
+  background: linear-gradient(160deg, rgba(255, 151, 194, .58), rgba(255, 225, 104, .18));
+}
+.project-color-field[data-signal="orbit"] i:nth-child(3) {
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(16, 16, 20, .3) .65px, transparent .8px),
+    radial-gradient(rgba(255, 255, 255, .75) .7px, transparent .9px);
+  background-position: 0 0, 9px 11px;
+  background-size: 23px 23px;
+  opacity: .16;
+}
+
+/* 06 / focus timer: warm energy held inside cyclical forms. */
+.project-color-field[data-signal="timer"] i:nth-child(1) {
+  top: -20%;
+  right: -5%;
+  width: 55%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(from 20deg, #ff654f, #ffb45f, #ff654f);
+  opacity: .5;
+}
+.project-color-field[data-signal="timer"] i:nth-child(2) {
+  left: 0;
+  bottom: 0;
+  width: 43%;
+  height: 24%;
+  background: #ffd73d;
+  clip-path: polygon(0 20%, 86% 20%, 100% 100%, 0 100%);
+  opacity: .62;
+}
+.project-color-field[data-signal="timer"] i:nth-child(3) {
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 0deg at 77% 48%,
+    rgba(16, 16, 20, .075) 0deg .65deg,
+    transparent .65deg 12deg
+  );
+}
+
+/* 07 / compiler: phosphor field with chromatic mis-registration. */
+.project-color-field[data-signal="compiler"] i:nth-child(1) {
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(16, 16, 20, .075) 0 1px,
+    transparent 1px 7px
+  );
+}
+.project-color-field[data-signal="compiler"] i:nth-child(2) {
+  top: 19%;
+  right: -4%;
+  width: 57%;
+  height: 11%;
+  background: linear-gradient(90deg, #ff533d 0 48%, #21c4cf 52% 100%);
+  transform: skewY(-5deg);
+  filter: blur(.35px);
+  opacity: .74;
+}
+.project-color-field[data-signal="compiler"] i:nth-child(3) {
+  right: 7%;
+  bottom: 9%;
+  width: 38%;
+  height: 29%;
+  border: 2px solid rgba(16, 16, 20, .2);
+  box-shadow:
+    -9px 0 0 rgba(255, 83, 61, .2),
+    9px 0 0 rgba(33, 196, 207, .2);
+}
+.project-stage[data-signal="compiler"] .project-copy h2 {
+  text-shadow:
+    -3px 0 rgba(33, 196, 207, .38),
+    3px 0 rgba(255, 83, 61, .38);
+}
+
+/* 08 / market filter: cool analytical blocks and stepped momentum. */
+.project-color-field[data-signal="market"] i:nth-child(1) {
+  top: 0;
+  right: 0;
+  width: 56%;
+  height: 100%;
+  background: linear-gradient(145deg, #53d0ba 0%, #56a7df 55%, #6a6edb 100%);
+  clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%, 0 78%, 9% 78%, 9% 44%, 16% 44%);
+  opacity: .58;
+}
+.project-color-field[data-signal="market"] i:nth-child(2) {
+  left: 0;
+  bottom: 0;
+  width: 38%;
+  height: 19%;
+  background: #8b78df;
+  opacity: .38;
+}
+.project-color-field[data-signal="market"] i:nth-child(3) {
+  inset: 0;
+  background:
+    linear-gradient(rgba(16, 16, 20, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 16, 20, .08) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
 .project-tracker {
   position: absolute;
   z-index: 6;
@@ -551,6 +814,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   gap: clamp(40px, 7vw, 120px);
   align-items: center;
   animation: project-switch-forward .52s cubic-bezier(.18, .75, .22, 1) both;
+  animation-delay: .06s;
 }
 .project-sequence[data-direction="backward"] .project-focus {
   animation-name: project-switch-backward;
@@ -898,6 +1162,9 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
     font-size: clamp(48px, 16vw, 72px);
     line-height: .86;
   }
+  .project-stage[data-signal="timer"] .project-copy h2 {
+    font-size: clamp(44px, 13vw, 58px);
+  }
   .project-description {
     max-width: 85vw;
     margin-top: 24px;
@@ -914,7 +1181,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
     right: 0;
     bottom: -8vh;
     width: 65vw;
-    opacity: .35;
+    opacity: .5;
     border-color: rgba(16, 16, 20, .2);
   }
   .project-stage-foot {
