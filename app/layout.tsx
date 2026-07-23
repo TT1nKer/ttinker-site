@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   metadataBase: new URL("https://ttinker.net"),
   title: "TT1nKer",
-  description: "Hardware, systems, AI — question-driven experiments.",
+  description: "System engineer / system artist.",
   icons: {
     icon: [
       { url: "/favicon-tt-question-v1.png", sizes: "32x32", type: "image/png" },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "TT1nKer",
-    description: "Hardware, systems, AI — question-driven experiments.",
+    description: "System engineer / system artist.",
     type: "website",
     url: "/",
     images: [{ url: "/og-scroll-stage.png", width: 1672, height: 941, alt: "TT1nKer" }],
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "TT1nKer",
-    description: "Hardware, systems, AI — question-driven experiments.",
+    description: "System engineer / system artist.",
     images: ["/og-scroll-stage.png"],
   },
 };

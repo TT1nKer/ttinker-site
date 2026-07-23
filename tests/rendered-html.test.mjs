@@ -59,6 +59,9 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(sequence, /prefers-reduced-motion/);
   assert.match(sequence, /project-static/);
   assert.match(sequence, /removeEventListener/);
+  assert.match(sequence, /projects\.length - 1/);
+  assert.match(sequence, /project-atmosphere/);
+  assert.match(sequence, /is-next/);
   assert.match(visual, /drawCommunities/);
   assert.match(visual, /drawCompiler/);
   assert.match(visual, /drawMarketFilter/);
@@ -70,6 +73,9 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(glitch, /ttinker:disturb/);
   assert.match(glitch, /between\(5200,\s*14800\)/);
   assert.match(css, /\.project-stage\s*\{[^}]*position:\s*sticky/s);
+  assert.match(css, /\.project-focus\.is-current/);
+  assert.match(css, /\.project-focus\.is-next/);
+  assert.doesNotMatch(css, /project-arrive|project-return/);
   assert.match(css, /@media \(max-width:\s*760px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
   assert.match(page, /ProjectSequence/);

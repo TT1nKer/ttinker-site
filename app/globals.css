@@ -394,8 +394,28 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   min-height: 680px;
   overflow: hidden;
   padding: 34px 4.5vw 30px;
-  background: var(--paper);
+  background: #eceae1;
 }
+.project-atmospheres {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+}
+.project-atmosphere {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: var(--project-paper, var(--paper));
+}
+.project-atmosphere[data-signal="mesh"] { --project-paper: #f0ede3; }
+.project-atmosphere[data-signal="transfer"] { --project-paper: #e6eeed; }
+.project-atmosphere[data-signal="field"] { --project-paper: #e9e8ef; }
+.project-atmosphere[data-signal="ablation"] { --project-paper: #efe5e2; }
+.project-atmosphere[data-signal="compiler"] { --project-paper: #eee9da; }
+.project-atmosphere[data-signal="market"] { --project-paper: #e6ede7; }
+.project-atmosphere.is-current { opacity: calc(1 - var(--project-local)); }
+.project-atmosphere.is-next { opacity: var(--project-local); }
 .project-stage::before {
   content: "";
   position: absolute;
@@ -417,27 +437,68 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   letter-spacing: .16em;
 }
 .project-stage-head p { margin: 0; }
-.project-stage-head span { color: var(--ink); }
-.project-focus {
+.project-counter {
+  position: relative;
+  width: 58px;
+  height: 18px;
+  overflow: hidden;
+  color: var(--ink);
+}
+.project-counter span {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  color: var(--ink);
+  transform: translateY(calc(var(--project-local) * -13px));
+}
+.project-counter span.is-next {
+  opacity: var(--project-local);
+  transform: translateY(calc((1 - var(--project-local)) * 13px));
+}
+.project-counter b {
+  position: absolute;
+  right: 0;
+  top: 5px;
+  font: inherit;
+}
+.project-motion-window {
   position: absolute;
   z-index: 2;
-  inset: 13vh 4.5vw 12vh;
+  inset: 62px 0 60px;
+  overflow: hidden;
+}
+.project-focus {
+  position: absolute;
+  z-index: 1;
+  inset:
+    max(28px, calc(13vh - 62px))
+    4.5vw
+    max(30px, calc(12vh - 60px));
   display: grid;
   grid-template-columns: minmax(0, 1.12fr) minmax(330px, .88fr);
   gap: clamp(40px, 7vw, 120px);
   align-items: center;
-  animation: project-arrive .58s cubic-bezier(.18, .75, .22, 1) both;
+  will-change: transform, opacity;
 }
-.project-sequence[data-direction="backward"] .project-focus {
-  animation-name: project-return;
+.project-focus.is-current {
+  opacity: clamp(0, calc(1.35 - var(--project-local) * 1.35), 1);
+  transform:
+    translate3d(0, calc(var(--project-local) * -60vh), 0)
+    scale(calc(1 - var(--project-local) * .012));
 }
-@keyframes project-arrive {
-  from { opacity: 0; transform: translateY(28px); }
-  to { opacity: 1; transform: translateY(0); }
+.project-focus.is-next {
+  z-index: 2;
+  pointer-events: none;
+  opacity: clamp(0, calc(var(--project-local) * 1.35), 1);
+  transform:
+    translate3d(0, calc((1 - var(--project-local)) * 60vh), 0)
+    scale(calc(.988 + var(--project-local) * .012));
 }
-@keyframes project-return {
-  from { opacity: 0; transform: translateY(-28px); }
-  to { opacity: 1; transform: translateY(0); }
+.project-focus.is-current .project-observation {
+  transform: translateY(calc(var(--project-local) * -22px));
+}
+.project-focus.is-next .project-observation {
+  transform: translateY(calc((1 - var(--project-local)) * 22px));
 }
 .project-status {
   margin: 0 0 34px;
@@ -740,8 +801,21 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   }
   .project-stage::before { width: 52%; }
   .project-focus {
-    inset: 10vh 20px 16vh;
+    inset:
+      max(20px, calc(10vh - 62px))
+      20px
+      max(54px, calc(16vh - 60px));
     display: block;
+  }
+  .project-focus.is-current {
+    transform:
+      translate3d(0, calc(var(--project-local) * -20vh), 0)
+      scale(calc(1 - var(--project-local) * .012));
+  }
+  .project-focus.is-next {
+    transform:
+      translate3d(0, calc((1 - var(--project-local)) * 20vh), 0)
+      scale(calc(.988 + var(--project-local) * .012));
   }
   .project-status { margin-bottom: 24px; font-size: 7px; }
   .project-copy { position: relative; z-index: 3; }

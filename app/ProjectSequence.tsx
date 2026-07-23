@@ -70,6 +70,9 @@ const projects = [
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
+type Project = (typeof projects)[number];
+type Signal = "mesh" | "transfer" | "field" | "ablation" | "compiler" | "market";
+
 export default function ProjectSequence() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -88,16 +91,19 @@ export default function ProjectSequence() {
       frame = 0;
       const range = Math.max(1, section.offsetHeight - window.innerHeight);
       const progress = clamp(-section.getBoundingClientRect().top / range, 0, 1);
-      const index = clamp(Math.floor(progress * projects.length), 0, projects.length - 1);
-      const local = clamp(progress * projects.length - index, 0, 1);
+      const scaled = progress * (projects.length - 1);
+      const index = clamp(Math.floor(scaled), 0, projects.length - 1);
+      const local = index === projects.length - 1 ? 0 : clamp(scaled - index, 0, 1);
 
       section.style.setProperty("--work-progress", progress.toFixed(5));
-      section.style.setProperty("--project-local", local.toFixed(5));
       if (index !== previousIndex) {
         section.dataset.direction = index > previousIndex ? "forward" : "backward";
         previousIndex = index;
         setActiveIndex(index);
+        frame = requestAnimationFrame(update);
+        return;
       }
+      section.style.setProperty("--project-local", local.toFixed(5));
     };
 
     const requestUpdate = () => {
@@ -120,11 +126,43 @@ export default function ProjectSequence() {
     const section = sectionRef.current;
     if (!section) return;
     const range = section.offsetHeight - window.innerHeight;
-    const top = section.offsetTop + (index + 0.08) / projects.length * range;
+    const top = section.offsetTop + index / (projects.length - 1) * range;
     window.scrollTo({ top, behavior: "auto" });
   };
 
   const project = projects[activeIndex];
+  const nextProject = projects[activeIndex + 1];
+
+  const renderProject = (item: Project, role: "current" | "next") => (
+    <article
+      className={`project-focus is-${role}`}
+      key={`${role}-${item.name}`}
+      aria-hidden={role === "next"}
+    >
+      <div className="project-copy">
+        <p className="project-status">{item.area}</p>
+        <h2>{item.name}</h2>
+        <p className="project-description">{item.description}</p>
+        <div className="project-detail">
+          <span>{item.detail}</span>
+          <a
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+            tabIndex={role === "next" ? -1 : undefined}
+          >
+            OPEN REPOSITORY <b>↗</b>
+          </a>
+        </div>
+      </div>
+
+      <div className="project-observation" data-signal={item.signal} aria-hidden="true">
+        <span className="observation-readout">{item.readout}</span>
+        <strong>{item.index}</strong>
+        <ProjectVisual signal={item.signal as Signal} />
+      </div>
+    </article>
+  );
 
   if (reducedMotion) {
     return (
@@ -151,30 +189,26 @@ export default function ProjectSequence() {
       style={{ "--project-count": projects.length } as CSSProperties}
     >
       <div className="project-stage">
-        <div className="project-stage-head">
-          <p>[ 01 / OWN REPOSITORIES ]</p>
-          <span>{project.index} / {String(projects.length).padStart(2, "0")}</span>
+        <div className="project-atmospheres" aria-hidden="true">
+          <i className="project-atmosphere is-current" data-signal={project.signal} />
+          {nextProject && (
+            <i className="project-atmosphere is-next" data-signal={nextProject.signal} />
+          )}
         </div>
 
-        <article className="project-focus" key={project.name}>
-          <div className="project-copy">
-            <p className="project-status">{project.area}</p>
-            <h2>{project.name}</h2>
-            <p className="project-description">{project.description}</p>
-            <div className="project-detail">
-              <span>{project.detail}</span>
-              <a href={project.href} target="_blank" rel="noreferrer">
-                OPEN REPOSITORY <b>↗</b>
-              </a>
-            </div>
+        <div className="project-stage-head">
+          <p>[ 01 / OWN REPOSITORIES ]</p>
+          <div className="project-counter" aria-hidden="true">
+            <span className="is-current">{project.index}</span>
+            {nextProject && <span className="is-next">{nextProject.index}</span>}
+            <b>/ {String(projects.length).padStart(2, "0")}</b>
           </div>
+        </div>
 
-          <div className="project-observation" data-signal={project.signal} aria-hidden="true">
-            <span className="observation-readout">{project.readout}</span>
-            <strong>{project.index}</strong>
-            <ProjectVisual signal={project.signal as "mesh" | "transfer" | "field" | "ablation" | "compiler" | "market"} />
-          </div>
-        </article>
+        <div className="project-motion-window">
+          {renderProject(project, "current")}
+          {nextProject && renderProject(nextProject, "next")}
+        </div>
 
         <div className="project-stage-foot">
           <ol aria-label="选择项目">

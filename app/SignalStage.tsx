@@ -151,7 +151,7 @@ export default function SignalStage() {
         <p className="eyebrow"><span className="status-dot" /> TT1NKER · COMPUTER ENGINEERING</p>
         <GlitchTitle />
         <span className="chromatic-rule" aria-hidden="true" />
-        <p className="hero-intro">硬件、系统、AI。持续试验。</p>
+        <p className="hero-intro">SYSTEM ENGINEER / SYSTEM ARTIST</p>
         <div className="hero-actions">
           <a className="hero-link" href="#work">浏览项目 / EXPLORE <b>↓</b></a>
           <a className="text-link" href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">github.com/TT1nKer ↗</a>
