@@ -185,6 +185,15 @@ export default function ProjectSequence() {
         data-signal={project.signal}
         style={{ "--active-index": activeIndex } as CSSProperties}
       >
+        <div className="project-tracker" aria-hidden="true">
+          <div className="project-tracker-scale">
+            {projects.map((item) => <i key={item.name} />)}
+          </div>
+          <div className="project-tracker-cursor" data-index={project.index}>
+            <b key={project.index} />
+          </div>
+        </div>
+
         <div className="project-stage-head">
           <p>[ 01 / OWN REPOSITORIES ]</p>
           <div className="project-counter" aria-hidden="true">
