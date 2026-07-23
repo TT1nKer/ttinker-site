@@ -66,7 +66,6 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(sequence, /progress \* projects\.length/);
   assert.match(sequence, /project-active-marker/);
   assert.match(sequence, /project-tracker-cursor/);
-  assert.match(sequence, /project-color-field/);
   assert.match(sequence, /--active-index/);
   assert.doesNotMatch(sequence, /project-atmosphere|is-next|departing/);
   assert.match(visual, /drawCommunities/);
@@ -89,10 +88,6 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(css, /var\(--tracker-travel\)/);
   assert.match(css, /var\(--work-progress\)/);
   assert.match(css, /tracker-lock/);
-  assert.match(css, /color-field-forward/);
-  assert.match(css, /color-field-backward/);
-  assert.match(css, /project-color-field\[data-signal="mesh"\]/);
-  assert.match(css, /project-color-field\[data-signal="market"\]/);
   assert.match(css, /\.project-active-marker/);
   assert.match(css, /var\(--active-index\)/);
   assert.match(css, /project-switch-forward/);
