@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import ProjectVisual from "./ProjectVisual";
 
 const projects = [
   {
@@ -171,9 +172,7 @@ export default function ProjectSequence() {
           <div className="project-observation" data-signal={project.signal} aria-hidden="true">
             <span className="observation-readout">{project.readout}</span>
             <strong>{project.index}</strong>
-            <div className="observation-field">
-              {Array.from({ length: 24 }, (_, index) => <i key={index} />)}
-            </div>
+            <ProjectVisual signal={project.signal as "mesh" | "transfer" | "field" | "ablation" | "compiler" | "market"} />
           </div>
         </article>
 

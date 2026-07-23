@@ -38,9 +38,10 @@ test("renders the authored portfolio instead of starter or template copy", async
 });
 
 test("ships causal hero and scroll-stage systems with cleanup and reduced-motion coverage", async () => {
-  const [stage, sequence, glitch, css, page] = await Promise.all([
+  const [stage, sequence, visual, glitch, css, page] = await Promise.all([
     readFile(new URL("../app/SignalStage.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/ProjectSequence.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/ProjectVisual.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GlitchTitle.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -58,6 +59,14 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(sequence, /prefers-reduced-motion/);
   assert.match(sequence, /project-static/);
   assert.match(sequence, /removeEventListener/);
+  assert.match(visual, /drawCommunities/);
+  assert.match(visual, /drawCompiler/);
+  assert.match(visual, /drawMarketFilter/);
+  assert.match(visual, /IntersectionObserver/);
+  assert.match(visual, /ResizeObserver/);
+  assert.match(visual, /Math\.min\(1\.5,\s*window\.devicePixelRatio/);
+  assert.match(visual, /cancelAnimationFrame/);
+  assert.match(visual, /observer\.disconnect/);
   assert.match(glitch, /ttinker:disturb/);
   assert.match(glitch, /between\(5200,\s*14800\)/);
   assert.match(css, /\.project-stage\s*\{[^}]*position:\s*sticky/s);

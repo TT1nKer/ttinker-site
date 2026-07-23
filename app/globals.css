@@ -13,7 +13,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; background: var(--ink); }
+html { background: var(--ink); }
 body {
   margin: 0;
   overflow-x: hidden;
@@ -460,7 +460,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   max-width: 900px;
   margin: 0;
   overflow-wrap: anywhere;
-  font-size: clamp(62px, 7.6vw, 126px);
+  font-size: clamp(58px, 7vw, 116px);
   font-weight: 820;
   line-height: .83;
   letter-spacing: -.075em;
@@ -492,36 +492,19 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
 .project-detail a:hover { transform: translate(3px, -2px); }
 .project-detail b { margin-left: 12px; color: var(--coral); }
 .project-observation {
-  --signal-accent: var(--coral);
   position: relative;
   width: min(37vw, 520px);
   aspect-ratio: 1;
   justify-self: end;
   border: 1px solid rgba(16, 16, 20, .18);
 }
-.project-observation::before,
-.project-observation::after {
+.project-observation::before {
   content: "";
   position: absolute;
   pointer-events: none;
-}
-.project-observation::before {
   inset: 7%;
   border: 1px solid rgba(16, 16, 20, .08);
 }
-.project-observation::after {
-  left: 50%;
-  top: -7%;
-  bottom: -7%;
-  width: 1px;
-  background: rgba(16, 16, 20, .12);
-  transform: rotate(calc(-12deg + var(--project-local) * 24deg));
-  transform-origin: center;
-}
-.project-observation[data-signal="transfer"],
-.project-observation[data-signal="market"] { --signal-accent: var(--cyan); }
-.project-observation[data-signal="field"],
-.project-observation[data-signal="compiler"] { --signal-accent: #5265d8; }
 .observation-readout {
   position: absolute;
   z-index: 2;
@@ -542,93 +525,13 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
   line-height: .72;
   letter-spacing: -.12em;
 }
-.observation-field {
+.project-canvas {
   position: absolute;
   z-index: 1;
-  inset: 21% 14%;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  align-items: center;
-  justify-items: center;
-}
-.observation-field i {
-  display: block;
-  width: 6px;
-  height: 6px;
-  background: var(--signal-accent);
-}
-[data-signal="mesh"] .observation-field i {
-  border-radius: 50%;
-  transform: translate(
-    calc((var(--project-local) - .5) * 20px),
-    calc((var(--project-local) - .5) * -12px)
-  );
-}
-[data-signal="mesh"] .observation-field i:nth-child(3n) {
-  transform: translate(
-    calc((var(--project-local) - .5) * -28px),
-    calc((var(--project-local) - .5) * 19px)
-  ) scale(1.4);
-}
-[data-signal="transfer"] .observation-field {
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-}
-[data-signal="transfer"] .observation-field i {
-  width: 3px;
-  height: calc(12px + (var(--project-local) * 42px));
-}
-[data-signal="transfer"] .observation-field i:nth-child(3n) {
-  height: calc(55px - (var(--project-local) * 30px));
-}
-[data-signal="field"] .observation-field i {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: transparent;
-  border: 1px solid var(--signal-accent);
-  transform: rotate(calc(var(--project-local) * 90deg)) scale(calc(.65 + var(--project-local) * .45));
-}
-[data-signal="field"] .observation-field i:nth-child(odd) {
-  width: 5px;
-  height: 5px;
-  background: var(--signal-accent);
-}
-[data-signal="ablation"] .observation-field { gap: 5px; }
-[data-signal="ablation"] .observation-field i {
-  width: 100%;
-  height: 100%;
-  opacity: .72;
-}
-[data-signal="ablation"] .observation-field i:nth-child(3),
-[data-signal="ablation"] .observation-field i:nth-child(8),
-[data-signal="ablation"] .observation-field i:nth-child(15),
-[data-signal="ablation"] .observation-field i:nth-child(21) {
-  opacity: .06;
-  transform: scale(calc(.12 + var(--project-local) * .45));
-}
-[data-signal="compiler"] .observation-field {
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-}
-[data-signal="compiler"] .observation-field i {
-  width: 2px;
-  height: 44px;
-  transform: scaleY(calc(.25 + var(--project-local) * .75));
-}
-[data-signal="compiler"] .observation-field i:nth-child(4n) { height: 80px; }
-[data-signal="market"] .observation-field {
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 1fr;
-  align-items: end;
-}
-[data-signal="market"] .observation-field i { width: 4px; height: 24px; }
-[data-signal="market"] .observation-field i:nth-child(3n + 1) {
-  height: calc(20px + var(--project-local) * 54px);
-}
-[data-signal="market"] .observation-field i:nth-child(3n + 2) {
-  height: calc(68px - var(--project-local) * 35px);
+  inset: 9%;
+  width: 82%;
+  height: 82%;
+  touch-action: pan-y;
 }
 .project-stage-foot {
   position: absolute;
