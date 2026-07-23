@@ -555,13 +555,13 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 5px; }
 .project-sequence[data-direction="backward"] .project-focus {
   animation-name: project-switch-backward;
 }
-.project-focus[data-linked="protocol"] {
+.project-focus[data-linked="continuum"] {
   animation: none;
 }
-.project-focus[data-linked="protocol"] .project-copy {
+.project-focus[data-linked="continuum"] .project-copy {
   animation: project-switch-forward .52s cubic-bezier(.18, .75, .22, 1) both;
 }
-.project-sequence[data-direction="backward"] .project-focus[data-linked="protocol"] .project-copy {
+.project-sequence[data-direction="backward"] .project-focus[data-linked="continuum"] .project-copy {
   animation-name: project-switch-backward;
 }
 .project-focus .project-copy {

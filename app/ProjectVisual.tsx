@@ -283,15 +283,14 @@ function drawProtocolMorph(
   });
 }
 
-function drawAdaptiveField(
-  context: CanvasRenderingContext2D,
+function adaptiveNodes(
   width: number,
   height: number,
   time: number,
   pointer: Point,
   engaged: number,
 ) {
-  const nodes = Array.from({ length: 27 }, (_, index) => {
+  return Array.from({ length: 28 }, (_, index) => {
     const column = index % 6;
     const row = Math.floor(index / 6);
     const baseX = width * (.12 + column * .15 + (row % 2) * .035);
@@ -303,7 +302,14 @@ function drawAdaptiveField(
       y: baseY + Math.cos(time * .43 + index * .91) * 7 + ((baseY - pointer.y) / distance) * push,
     };
   });
+}
 
+function drawAdaptiveEdges(
+  context: CanvasRenderingContext2D,
+  nodes: Point[],
+  width: number,
+  alpha = 1,
+) {
   nodes.forEach((node, index) => {
     const candidates = nodes
       .map((other, otherIndex) => ({
@@ -316,8 +322,128 @@ function drawAdaptiveField(
       .slice(0, 2);
 
     candidates.forEach(({ other, distance }) => {
-      if (distance < width * .24) line(context, node, other, INK, .1 + (1 - distance / width) * .1);
+      if (distance < width * .24) {
+        line(
+          context,
+          node,
+          other,
+          INK,
+          (.1 + (1 - distance / width) * .1) * alpha,
+        );
+      }
     });
+  });
+}
+
+function drawTransferFieldMorph(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+  morph: number,
+) {
+  const channelAlpha = 1 - smoothstep(.08, .78, morph);
+  const fieldAlpha = smoothstep(.3, .94, morph);
+  const gate = mix(
+    width * .54,
+    width * .59,
+    engaged * clamp(pointer.x / width) * channelAlpha,
+  );
+  const targets = adaptiveNodes(
+    width,
+    height,
+    time,
+    pointer,
+    engaged * fieldAlpha,
+  );
+  const nodes = targets.map((target, index) => {
+    const lane = index % 5;
+    const transferProgress =
+      (time * (.068 + lane * .004) + index * .173) % 1;
+    return {
+      point: {
+        x: mix(
+          mix(width * .1, width * .9, transferProgress),
+          target.x,
+          morph,
+        ),
+        y: mix(height * (.24 + lane * .13), target.y, morph),
+      },
+      lane,
+    };
+  });
+
+  for (let lane = 0; lane < 5; lane += 1) {
+    const y = height * (.24 + lane * .13);
+    line(context, { x: width * .09, y }, { x: gate - 16, y }, INK, .16 * channelAlpha);
+    line(context, { x: gate + 18, y }, { x: width * .91, y }, INK, .16 * channelAlpha);
+  }
+
+  context.save();
+  context.strokeStyle = INK;
+  context.globalAlpha = .32 * channelAlpha;
+  context.beginPath();
+  context.arc(gate, height * .5, 22 + engaged * 8, -.7, Math.PI * 1.25);
+  context.stroke();
+  context.restore();
+  line(
+    context,
+    { x: gate - 6, y: height * .5 + 3 },
+    { x: gate, y: height * .5 + 9 },
+    LIME,
+    .9 * channelAlpha,
+    2,
+  );
+  line(
+    context,
+    { x: gate, y: height * .5 + 9 },
+    { x: gate + 11, y: height * .5 - 8 },
+    LIME,
+    .9 * channelAlpha,
+    2,
+  );
+
+  drawAdaptiveEdges(
+    context,
+    nodes.map(({ point }) => point),
+    width,
+    fieldAlpha,
+  );
+
+  nodes.forEach(({ point }, index) => {
+    const transferColor = point.x > gate ? CYAN : CORAL;
+    const fieldColor = index % 3 === 0 ? BLUE : INK;
+    const nearGate = Math.abs(point.x - gate) < 20;
+
+    context.save();
+    context.fillStyle = transferColor;
+    context.globalAlpha = .76 * channelAlpha * (nearGate ? .16 : 1);
+    context.fillRect(point.x - 7, point.y - 2, 14, 4);
+    context.restore();
+    dot(
+      context,
+      point,
+      mix(2.2, index % 7 === 0 ? 4 : 2.2, fieldAlpha),
+      fieldColor,
+      .24 * channelAlpha + .78 * fieldAlpha,
+    );
+  });
+  dot(context, pointer, 18 + engaged * 8, CORAL, engaged * fieldAlpha * .08);
+}
+
+function drawAdaptiveField(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+) {
+  const nodes = adaptiveNodes(width, height, time, pointer, engaged);
+  drawAdaptiveEdges(context, nodes, width);
+  nodes.forEach((node, index) => {
     dot(context, node, index % 7 === 0 ? 4 : 2.2, index % 3 === 0 ? BLUE : INK, .78);
   });
   dot(context, pointer, 18 + engaged * 8, CORAL, engaged * .08);
@@ -769,7 +895,15 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
         );
       }
       if (signal === "transfer") {
-        drawProtocolMorph(context, width, height, time, pointer, pointer.engaged, 1);
+        drawTransferFieldMorph(
+          context,
+          width,
+          height,
+          time,
+          pointer,
+          pointer.engaged,
+          reduced ? 0 : smoothstep(.48, .98, localProgress),
+        );
       }
       if (signal === "field") drawAdaptiveField(context, width, height, time, pointer, pointer.engaged);
       if (signal === "datapath") drawDatapath(context, width, height, time, pointer, pointer.engaged);

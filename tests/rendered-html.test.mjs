@@ -69,6 +69,7 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(sequence, /--active-index/);
   assert.doesNotMatch(sequence, /project-atmosphere|is-next|departing/);
   assert.match(visual, /drawProtocolMorph/);
+  assert.match(visual, /drawTransferFieldMorph/);
   assert.match(visual, /smoothstep\(\.48,\s*\.98,\s*localProgress\)/);
   assert.match(visual, /drawDatapath/);
   assert.match(visual, /drawOrbitTransfer/);
