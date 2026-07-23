@@ -2,7 +2,15 @@
 
 import { useEffect, useRef } from "react";
 
-type Signal = "mesh" | "transfer" | "field" | "ablation" | "compiler" | "market";
+type Signal =
+  | "mesh"
+  | "transfer"
+  | "field"
+  | "datapath"
+  | "orbit"
+  | "timer"
+  | "compiler"
+  | "market";
 
 type Point = { x: number; y: number };
 
@@ -249,7 +257,7 @@ function drawAdaptiveField(
   dot(context, pointer, 18 + engaged * 8, CORAL, engaged * .08);
 }
 
-function drawAblation(
+function drawDatapath(
   context: CanvasRenderingContext2D,
   width: number,
   height: number,
@@ -257,51 +265,245 @@ function drawAblation(
   pointer: Point,
   engaged: number,
 ) {
-  const layers = [4, 6, 7, 5, 3];
-  const cutX = mix(width * .58, clamp(pointer.x, width * .32, width * .74), engaged);
-  const cutY = mix(height * .48, clamp(pointer.y, height * .24, height * .76), engaged);
-  const layerNodes = layers.map((count, layer) =>
-    Array.from({ length: count }, (_, index) => ({
-      x: width * (.12 + layer * .19),
-      y: height * (.18 + (index / Math.max(1, count - 1)) * .64),
-    })),
-  );
+  const inputs = [.27, .5, .73].map((y) => ({ x: width * .09, y: height * y }));
+  const graph = [
+    { x: .34, y: .29, label: "+" },
+    { x: .34, y: .67, label: "×" },
+    { x: .49, y: .2, label: "≡" },
+    { x: .49, y: .48, label: "+" },
+    { x: .49, y: .77, label: "≡" },
+    { x: .64, y: .34, label: "×" },
+    { x: .64, y: .66, label: "+" },
+  ].map((node) => ({ ...node, x: node.x * width, y: node.y * height }));
+  const outputs = [
+    { x: width * .89, y: height * .36, label: "DSP" },
+    { x: width * .89, y: height * .65, label: "LUT" },
+  ];
+  const lutMode = engaged > .08 && pointer.y > height * .5;
+  const selected = lutMode ? [1, 4, 6] : [0, 2, 5];
+  const edges = [
+    [inputs[0], graph[0]], [inputs[1], graph[0]], [inputs[1], graph[1]],
+    [inputs[2], graph[1]], [graph[0], graph[2]], [graph[0], graph[3]],
+    [graph[1], graph[3]], [graph[1], graph[4]], [graph[2], graph[5]],
+    [graph[3], graph[5]], [graph[3], graph[6]], [graph[4], graph[6]],
+    [graph[5], outputs[0]], [graph[6], outputs[1]],
+  ] as const;
 
-  layerNodes.slice(0, -1).forEach((nodes, layer) => {
-    nodes.forEach((from, index) => {
-      const next = layerNodes[layer + 1];
-      [index % next.length, (index + 2) % next.length].forEach((nextIndex) => {
-        const to = next[nextIndex];
-        const midpoint = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
-        const removed = Math.hypot(midpoint.x - cutX, midpoint.y - cutY) < 46;
-        line(context, from, to, removed ? CORAL : INK, removed ? .06 : .13);
-      });
-    });
+  edges.forEach(([from, to], index) => {
+    const highlighted = lutMode
+      ? [2, 3, 7, 11, 13].includes(index)
+      : [0, 1, 4, 8, 12].includes(index);
+    line(
+      context,
+      from,
+      to,
+      highlighted ? (lutMode ? CYAN : CORAL) : INK,
+      highlighted ? .62 : .12,
+      highlighted ? 1.5 : 1,
+    );
+    if (highlighted) {
+      pulseOnLine(
+        context,
+        from,
+        to,
+        (time * .18 + index * .13) % 1,
+        lutMode ? CYAN : CORAL,
+        2.3,
+      );
+    }
   });
 
-  layerNodes.flat().forEach((node, index) => {
-    const removed = Math.hypot(node.x - cutX, node.y - cutY) < 38;
-    if (!removed) dot(context, node, index % 6 === 0 ? 3.5 : 2.1, index % 5 === 0 ? BLUE : INK, .78);
+  inputs.forEach((point, index) => {
+    context.save();
+    context.fillStyle = INK;
+    context.globalAlpha = .72;
+    context.fillRect(point.x - 10, point.y - 4, 20, 8);
+    context.font = "600 7px monospace";
+    context.fillText(String.fromCharCode(97 + index), point.x - 2, point.y - 10);
+    context.restore();
+  });
+
+  graph.forEach((node, index) => {
+    const active = selected.includes(index);
+    dot(context, node, active ? 10 : 7, active ? (lutMode ? CYAN : CORAL) : INK, active ? .13 : .05);
+    dot(context, node, 3, active ? (lutMode ? CYAN : CORAL) : INK, .9);
+    context.save();
+    context.fillStyle = INK;
+    context.globalAlpha = .6;
+    context.font = "600 8px monospace";
+    context.fillText(node.label, node.x + 9, node.y + 3);
+    context.restore();
+  });
+
+  outputs.forEach((node, index) => {
+    const active = index === (lutMode ? 1 : 0);
+    context.save();
+    context.strokeStyle = active ? (lutMode ? CYAN : CORAL) : INK;
+    context.globalAlpha = active ? .82 : .2;
+    context.strokeRect(node.x - 23, node.y - 12, 46, 24);
+    context.fillStyle = INK;
+    context.font = "650 8px monospace";
+    context.fillText(node.label, node.x - 10, node.y + 3);
+    context.restore();
+  });
+}
+
+function drawOrbitTransfer(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+) {
+  const unit = Math.min(width, height);
+  const focus = { x: width * .39, y: height * .52 };
+  const inner = unit * .18;
+  const outer = unit * .34;
+  const semiMajor = (inner + outer) / 2;
+  const semiMinor = Math.sqrt(inner * outer);
+  const centerX = focus.x + (outer - inner) / 2;
+  const transferProgress = engaged > .08
+    ? clamp(pointer.x / width, 0, 1)
+    : (time * .035) % 1;
+
+  [inner, outer].forEach((radius, index) => {
+    context.save();
+    context.strokeStyle = INK;
+    context.globalAlpha = index ? .13 : .2;
+    context.setLineDash(index ? [3, 6] : []);
+    context.beginPath();
+    context.arc(focus.x, focus.y, radius, 0, Math.PI * 2);
+    context.stroke();
+    context.restore();
   });
 
   context.save();
   context.strokeStyle = CORAL;
-  context.globalAlpha = .7;
-  context.setLineDash([4, 5]);
+  context.globalAlpha = .66;
+  context.lineWidth = 1.5;
   context.beginPath();
-  context.arc(cutX, cutY, 38, 0, Math.PI * 2);
+  context.ellipse(centerX, focus.y, semiMajor, semiMinor, 0, Math.PI, Math.PI * 2);
   context.stroke();
   context.restore();
 
-  const recovery = (Math.sin(time * 2.1) + 1) / 2;
+  const earth = { x: focus.x - inner, y: focus.y };
+  const mars = { x: focus.x + outer, y: focus.y };
+  const angle = Math.PI + transferProgress * Math.PI;
+  const craft = {
+    x: centerX + Math.cos(angle) * semiMajor,
+    y: focus.y + Math.sin(angle) * semiMinor,
+  };
+
+  dot(context, focus, 8, LIME, .92);
+  dot(context, earth, 5, BLUE, .9);
+  dot(context, mars, 4.5, CORAL, .9);
+  dot(context, craft, 3.3, CYAN, 1);
+  line(context, focus, craft, INK, .08);
+
+  const tangent = {
+    x: -Math.sin(angle) * 16,
+    y: Math.cos(angle) * 10,
+  };
   line(
     context,
-    { x: cutX - 70, y: cutY + 60 },
-    { x: cutX + 75, y: cutY + 60 - recovery * 18 },
+    { x: craft.x - tangent.x, y: craft.y - tangent.y },
+    { x: craft.x + tangent.x, y: craft.y + tangent.y },
     CYAN,
-    .55,
-    2,
+    .8,
+    1.5,
   );
+
+  context.save();
+  context.fillStyle = INK;
+  context.globalAlpha = .5;
+  context.font = "600 7px monospace";
+  context.fillText("1.00 AU", earth.x - 18, earth.y + 18);
+  context.fillText("1.52 AU", mars.x - 18, mars.y + 18);
+  context.fillText(`T+${String(Math.round(transferProgress * 259)).padStart(3, "0")}D`, craft.x + 9, craft.y - 7);
+  context.restore();
+}
+
+function drawFocusPhases(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Point,
+  engaged: number,
+) {
+  const center = { x: width * .5, y: height * .45 };
+  const radius = Math.min(width, height) * .24;
+  const pointerAngle =
+    Math.atan2(pointer.y - center.y, pointer.x - center.x) / (Math.PI * 2);
+  const progress = engaged > .08
+    ? (pointerAngle + 1.25) % 1
+    : (time * .018) % 1;
+  const phases = [
+    { value: 25, color: CORAL, label: "FOCUS" },
+    { value: 5, color: CYAN, label: "BREAK" },
+    { value: 25, color: CORAL, label: "FOCUS" },
+    { value: 15, color: LIME, label: "RESET" },
+  ];
+  const total = phases.reduce((sum, phase) => sum + phase.value, 0);
+  const activePhase = Math.floor(progress * phases.length) % phases.length;
+  let cursor = -Math.PI / 2;
+
+  phases.forEach((phase, index) => {
+    const span = (phase.value / total) * Math.PI * 2;
+    context.save();
+    context.strokeStyle = phase.color;
+    context.globalAlpha = index === activePhase ? .9 : .22;
+    context.lineWidth = index === activePhase ? 8 : 4;
+    context.beginPath();
+    context.arc(center.x, center.y, radius, cursor + .035, cursor + span - .035);
+    context.stroke();
+    context.restore();
+    cursor += span;
+  });
+
+  for (let tick = 0; tick < 60; tick += 1) {
+    const angle = (tick / 60) * Math.PI * 2 - Math.PI / 2;
+    const length = tick % 5 === 0 ? 8 : 4;
+    const from = {
+      x: center.x + Math.cos(angle) * (radius - 18),
+      y: center.y + Math.sin(angle) * (radius - 18),
+    };
+    const to = {
+      x: center.x + Math.cos(angle) * (radius - 18 - length),
+      y: center.y + Math.sin(angle) * (radius - 18 - length),
+    };
+    line(context, from, to, INK, tick / 60 <= progress ? .4 : .1);
+  }
+
+  const remaining = Math.max(0, Math.ceil(25 * 60 * (1 - progress)));
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
+  context.save();
+  context.fillStyle = INK;
+  context.textAlign = "center";
+  context.globalAlpha = .9;
+  context.font = `750 ${Math.max(28, radius * .35)}px monospace`;
+  context.fillText(`${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`, center.x, center.y + 8);
+  context.globalAlpha = .45;
+  context.font = "650 7px monospace";
+  context.fillText("CUSTOM SEQUENCE / OFFLINE", center.x, center.y + 28);
+  context.restore();
+
+  let stripX = width * .12;
+  phases.forEach((phase, index) => {
+    const segmentWidth = width * .76 * (phase.value / total);
+    context.save();
+    context.fillStyle = phase.color;
+    context.globalAlpha = index === activePhase ? .8 : .22;
+    context.fillRect(stripX, height * .82, Math.max(2, segmentWidth - 3), 4);
+    context.fillStyle = INK;
+    context.globalAlpha = .4;
+    context.font = "600 6px monospace";
+    context.fillText(phase.label, stripX, height * .82 + 14);
+    context.restore();
+    stripX += segmentWidth;
+  });
 }
 
 function drawCompiler(
@@ -488,7 +690,9 @@ export default function ProjectVisual({ signal }: { signal: Signal }) {
       if (signal === "mesh") drawCommunities(context, width, height, time, pointer, pointer.engaged);
       if (signal === "transfer") drawTransfer(context, width, height, time, pointer, pointer.engaged);
       if (signal === "field") drawAdaptiveField(context, width, height, time, pointer, pointer.engaged);
-      if (signal === "ablation") drawAblation(context, width, height, time, pointer, pointer.engaged);
+      if (signal === "datapath") drawDatapath(context, width, height, time, pointer, pointer.engaged);
+      if (signal === "orbit") drawOrbitTransfer(context, width, height, time, pointer, pointer.engaged);
+      if (signal === "timer") drawFocusPhases(context, width, height, time, pointer, pointer.engaged);
       if (signal === "compiler") drawCompiler(context, width, height, time, pointer, pointer.engaged);
       if (signal === "market") drawMarketFilter(context, width, height, time, pointer, pointer.engaged);
 

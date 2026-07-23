@@ -37,16 +37,36 @@ const projects = [
   },
   {
     index: "04",
-    name: "Model Brain Surgery",
-    area: "EXPERIMENT",
-    description: "Ablation, persona vectors, and live memory editing.",
-    detail: "Python · Transformers · Ablation",
-    href: "https://github.com/TT1nKer/model-brain-surgery-lab",
-    signal: "ablation",
-    readout: "VECTOR / CUT",
+    name: "hwine",
+    area: "SYNTHESIS LAB",
+    description: "Equality-saturation experiments for FPGA datapath optimization.",
+    detail: "Rust · E-graphs · SystemVerilog",
+    href: "https://github.com/TT1nKer/hwine",
+    signal: "datapath",
+    readout: "REWRITE / EXTRACT",
   },
   {
     index: "05",
+    name: "solar",
+    area: "ORBITAL SANDBOX",
+    description: "A C++17 sandbox for orbital mechanics and mission experiments.",
+    detail: "C++17 · Dynamics · Validation",
+    href: "https://github.com/TT1nKer/solar",
+    signal: "orbit",
+    readout: "TRANSFER / ΔV",
+  },
+  {
+    index: "06",
+    name: "pomodoroAKAtimer",
+    area: "SHIPPED TOOL",
+    description: "An offline focus timer with custom phases and a local music bridge.",
+    detail: "Vue · Rust · Offline",
+    href: "https://github.com/TT1nKer/pomodoroAKAtimer",
+    signal: "timer",
+    readout: "FOCUS / PHASE",
+  },
+  {
+    index: "07",
     name: "fstCC",
     area: "39 / 39 TESTS",
     description: "A tiny C compiler bootstrapped in RISC-V assembly.",
@@ -56,7 +76,7 @@ const projects = [
     readout: "L0 → RV64",
   },
   {
-    index: "06",
+    index: "08",
     name: "StockItsMygo",
     area: "HOBBY TOOL",
     description: "A personal market-watching dashboard.",
@@ -71,7 +91,15 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
 type Project = (typeof projects)[number];
-type Signal = "mesh" | "transfer" | "field" | "ablation" | "compiler" | "market";
+type Signal =
+  | "mesh"
+  | "transfer"
+  | "field"
+  | "datapath"
+  | "orbit"
+  | "timer"
+  | "compiler"
+  | "market";
 
 export default function ProjectSequence() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -178,7 +206,10 @@ export default function ProjectSequence() {
       id="work"
       ref={sectionRef}
       data-direction="forward"
-      style={{ "--project-count": projects.length } as CSSProperties}
+      style={{
+        "--project-count": projects.length,
+        "--tracker-travel": `${((projects.length - 1) / projects.length) * 100}%`,
+      } as CSSProperties}
     >
       <div
         className="project-stage"

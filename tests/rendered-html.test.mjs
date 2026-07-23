@@ -55,7 +55,11 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(sequence, /position|requestAnimationFrame/);
   assert.match(sequence, /OWN REPOSITORIES/);
   assert.match(sequence, /opensender/);
+  assert.match(sequence, /hwine/);
+  assert.match(sequence, /solar/);
+  assert.match(sequence, /pomodoroAKAtimer/);
   assert.match(sequence, /39 \/ 39 TESTS/);
+  assert.doesNotMatch(sequence, /Model Brain Surgery|model-brain-surgery|ablation/i);
   assert.match(sequence, /prefers-reduced-motion/);
   assert.match(sequence, /project-static/);
   assert.match(sequence, /removeEventListener/);
@@ -65,6 +69,9 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(sequence, /--active-index/);
   assert.doesNotMatch(sequence, /project-atmosphere|is-next|departing/);
   assert.match(visual, /drawCommunities/);
+  assert.match(visual, /drawDatapath/);
+  assert.match(visual, /drawOrbitTransfer/);
+  assert.match(visual, /drawFocusPhases/);
   assert.match(visual, /drawCompiler/);
   assert.match(visual, /drawMarketFilter/);
   assert.match(visual, /IntersectionObserver/);
@@ -77,6 +84,8 @@ test("ships causal hero and scroll-stage systems with cleanup and reduced-motion
   assert.match(css, /\.project-stage\s*\{[^}]*position:\s*sticky/s);
   assert.match(css, /\.project-tracker-scale/);
   assert.match(css, /\.project-tracker-cursor/);
+  assert.match(css, /var\(--project-count\)/);
+  assert.match(css, /var\(--tracker-travel\)/);
   assert.match(css, /var\(--work-progress\)/);
   assert.match(css, /tracker-lock/);
   assert.match(css, /\.project-active-marker/);
