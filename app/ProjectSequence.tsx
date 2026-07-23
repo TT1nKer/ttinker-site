@@ -91,19 +91,17 @@ export default function ProjectSequence() {
       frame = 0;
       const range = Math.max(1, section.offsetHeight - window.innerHeight);
       const progress = clamp(-section.getBoundingClientRect().top / range, 0, 1);
-      const scaled = progress * (projects.length - 1);
+      const scaled = progress * projects.length;
       const index = clamp(Math.floor(scaled), 0, projects.length - 1);
-      const local = index === projects.length - 1 ? 0 : clamp(scaled - index, 0, 1);
+      const local = clamp(scaled - index, 0, 1);
 
       section.style.setProperty("--work-progress", progress.toFixed(5));
+      section.style.setProperty("--project-local", local.toFixed(5));
       if (index !== previousIndex) {
         section.dataset.direction = index > previousIndex ? "forward" : "backward";
         previousIndex = index;
         setActiveIndex(index);
-        frame = requestAnimationFrame(update);
-        return;
       }
-      section.style.setProperty("--project-local", local.toFixed(5));
     };
 
     const requestUpdate = () => {
@@ -126,19 +124,14 @@ export default function ProjectSequence() {
     const section = sectionRef.current;
     if (!section) return;
     const range = section.offsetHeight - window.innerHeight;
-    const top = section.offsetTop + index / (projects.length - 1) * range;
+    const top = section.offsetTop + (index + 0.08) / projects.length * range;
     window.scrollTo({ top, behavior: "auto" });
   };
 
   const project = projects[activeIndex];
-  const nextProject = projects[activeIndex + 1];
 
-  const renderProject = (item: Project, role: "current" | "next") => (
-    <article
-      className={`project-focus is-${role}`}
-      key={`${role}-${item.name}`}
-      aria-hidden={role === "next"}
-    >
+  const renderProject = (item: Project) => (
+    <article className="project-focus" key={item.name}>
       <div className="project-copy">
         <p className="project-status">{item.area}</p>
         <h2>{item.name}</h2>
@@ -149,7 +142,6 @@ export default function ProjectSequence() {
             href={item.href}
             target="_blank"
             rel="noreferrer"
-            tabIndex={role === "next" ? -1 : undefined}
           >
             OPEN REPOSITORY <b>↗</b>
           </a>
@@ -188,50 +180,47 @@ export default function ProjectSequence() {
       data-direction="forward"
       style={{ "--project-count": projects.length } as CSSProperties}
     >
-      <div className="project-stage">
-        <div className="project-atmospheres" aria-hidden="true">
-          <i className="project-atmosphere is-current" data-signal={project.signal} />
-          {nextProject && (
-            <i className="project-atmosphere is-next" data-signal={nextProject.signal} />
-          )}
-        </div>
-
+      <div
+        className="project-stage"
+        data-signal={project.signal}
+        style={{ "--active-index": activeIndex } as CSSProperties}
+      >
         <div className="project-stage-head">
           <p>[ 01 / OWN REPOSITORIES ]</p>
           <div className="project-counter" aria-hidden="true">
-            <span className="is-current">{project.index}</span>
-            {nextProject && <span className="is-next">{nextProject.index}</span>}
+            <span key={project.index}>{project.index}</span>
             <b>/ {String(projects.length).padStart(2, "0")}</b>
           </div>
         </div>
 
         <div className="project-motion-window">
-          {renderProject(project, "current")}
-          {nextProject && renderProject(nextProject, "next")}
+          {renderProject(project)}
         </div>
 
         <div className="project-stage-foot">
-          <ol aria-label="选择项目">
-            {projects.map((item, index) => (
-              <li key={item.name}>
-                <button
-                  type="button"
-                  onClick={() => jumpTo(index)}
-                  aria-current={index === activeIndex ? "true" : undefined}
-                  aria-label={`${item.index} ${item.name}`}
-                >
-                  <span>{item.index}</span>
-                  <i />
-                </button>
-              </li>
-            ))}
-          </ol>
+          <div className="project-selector">
+            <ol aria-label="选择项目">
+              {projects.map((item, index) => (
+                <li key={item.name}>
+                  <button
+                    type="button"
+                    onClick={() => jumpTo(index)}
+                    aria-current={index === activeIndex ? "true" : undefined}
+                    aria-label={`${item.index} ${item.name}`}
+                  >
+                    <span>{item.index}</span>
+                    <i />
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <i className="project-active-marker" aria-hidden="true" />
+          </div>
           <span className="scroll-instruction">SCROLL / EXAMINE</span>
           <a href="https://github.com/TT1nKer?tab=repositories" target="_blank" rel="noreferrer">
             ALL REPOSITORIES ↗
           </a>
         </div>
-        <div className="project-progress" aria-hidden="true"><i /></div>
       </div>
 
       <div className="project-scroll-space" aria-hidden="true">
