@@ -6,8 +6,9 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ttinker.net"),
   title: "TT1nKer",
-  description: "Hardware, systems, AI.",
+  description: "Hardware, systems, AI — question-driven experiments.",
   icons: {
     icon: [
       { url: "/favicon-tt-question-v1.png", sizes: "32x32", type: "image/png" },
@@ -18,13 +19,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "TT1nKer",
-    description: "Hardware, systems, AI.",
+    description: "Hardware, systems, AI — question-driven experiments.",
     type: "website",
+    url: "/",
+    images: [{ url: "/og.png", width: 1729, height: 910, alt: "TT1nKer" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "TT1nKer",
-    description: "Hardware, systems, AI.",
+    description: "Hardware, systems, AI — question-driven experiments.",
+    images: ["/og.png"],
   },
 };
 
