@@ -216,12 +216,14 @@ export default function SystemsArchive() {
           <ol className="system-list" aria-label="系统目录">
             {systems.map((item, index) => (
               <li key={item.name}>
-                <button
-                  type="button"
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
                   onPointerEnter={() => setActive(index)}
                   onFocus={() => setActive(index)}
-                  onClick={() => setActive(index)}
                   aria-current={index === active ? "true" : undefined}
+                  aria-label={`Open ${item.name} repository`}
                   style={{ "--system-accent": item.accent } as CSSProperties}
                 >
                   <span>{item.index}</span>
@@ -229,7 +231,7 @@ export default function SystemsArchive() {
                   <small>{item.kind}</small>
                   <b>{item.state}</b>
                   <i>↗</i>
-                </button>
+                </a>
               </li>
             ))}
           </ol>
