@@ -47,7 +47,7 @@ export default function SignalStage() {
       stage.style.setProperty("--signal-speed", current.speed.toFixed(4));
       stage.style.setProperty("--stage-progress", current.progress.toFixed(4));
       stage.style.setProperty("--hero-scroll", current.scroll.toFixed(4));
-      stage.dataset.stage = String(clamp(Math.round(current.progress * 4), 0, 4));
+      stage.dataset.stage = String(clamp(Math.round(current.progress * 5), 0, 5));
 
       const unsettled =
         Math.abs(target.x - current.x) +
@@ -148,12 +148,13 @@ export default function SignalStage() {
       <div className="signal-probe" aria-hidden="true"><i /></div>
 
       <div className="hero-copy">
-        <p className="eyebrow"><span className="status-dot" /> TT1NKER · COMPUTER ENGINEERING</p>
+        <p className="eyebrow"><span className="status-dot" /> TT1NKER · SYSTEMS LAB</p>
         <GlitchTitle />
         <span className="chromatic-rule" aria-hidden="true" />
         <p className="hero-intro">SYSTEM ENGINEER / SYSTEM ARTIST</p>
+        <p className="hero-scope">Protocols, runtimes, strange machines.</p>
         <div className="hero-actions">
-          <a className="hero-link" href="#work">浏览项目 / EXPLORE <b>↓</b></a>
+          <a className="hero-link" href="#systems">进入系统 / ENTER <b>↓</b></a>
           <a className="text-link" href="https://github.com/TT1nKer" target="_blank" rel="noreferrer">github.com/TT1nKer ↗</a>
         </div>
       </div>
@@ -174,12 +175,13 @@ export default function SignalStage() {
         />
       </button>
 
-      <div className="process-loop" aria-label="从想法到新问题的实验循环">
-        <div className="process-step"><small>01</small><span>IDEA</span></div>
-        <div className="process-step"><small>02</small><span>PROMPT</span></div>
-        <div className="process-step"><small>03</small><span>CODE</span></div>
+      <div className="process-loop" aria-label="从问题到新问题的实验循环">
+        <div className="process-step"><small>01</small><span>QUESTION</span></div>
+        <div className="process-step"><small>02</small><span>MODEL</span></div>
+        <div className="process-step"><small>03</small><span>BUILD</span></div>
         <div className="process-step"><small>04</small><span>TEST</span></div>
-        <div className="process-step question"><small>05</small><span>?</span></div>
+        <div className="process-step"><small>05</small><span>REVISE</span></div>
+        <div className="process-step question"><small>06</small><span>?</span></div>
         <i className="process-pulse" aria-hidden="true" />
       </div>
     </section>

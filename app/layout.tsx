@@ -22,13 +22,20 @@ export const metadata: Metadata = {
     description: "System engineer / system artist.",
     type: "website",
     url: "/",
-    images: [{ url: "/og-scroll-stage.png", width: 1672, height: 941, alt: "TT1nKer" }],
+    images: [
+      {
+        url: "/og-editorial-v2.png",
+        width: 1731,
+        height: 909,
+        alt: "TT1nKer — question-driven systems",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "TT1nKer",
     description: "System engineer / system artist.",
-    images: ["/og-scroll-stage.png"],
+    images: ["/og-editorial-v2.png"],
   },
 };
 

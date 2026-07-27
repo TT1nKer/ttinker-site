@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101014" />
+    <meta
+      name="description"
+      content="TT1nKer Question Field — an unstable identity rendered as a WebGL particle field."
+    />
+    <title>Question Field — TT1nKer Motion Lab</title>
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="stage" data-mode="question">
+      <header class="lab-header">
+        <a class="mark" href="/motion-lab/" aria-label="返回 Motion Lab">TT1?</a>
+        <p>MOTION LAB / QUESTION FIELD / 01</p>
+        <a href="https://ttinker.net">TTINKER.NET ↗</a>
+      </header>
+
+      <section class="intro" aria-labelledby="field-title">
+        <p class="kicker"><span></span> IDENTITY IS A MOVING TARGET</p>
+        <h1 id="field-title">
+          QUESTION
+          <span>FIELD.</span>
+        </h1>
+        <p class="lede">
+          A system tries to resolve itself.<br />
+          The answer keeps becoming another question.
+        </p>
+      </section>
+
+      <div class="field-shell">
+        <canvas id="field" aria-label="在球体、TT1 与 TT问号之间变化的交互式三维粒子场"></canvas>
+        <div class="reticle" aria-hidden="true"><i></i></div>
+        <div class="identity-readout" aria-hidden="true">
+          <span>RESOLVING</span>
+          <strong>TT?</strong>
+        </div>
+      </div>
+
+      <div class="meter" aria-hidden="true">
+        <p><span>UNCERTAIN</span><span>RESOLVED</span></p>
+        <div><i></i></div>
+      </div>
+
+      <footer class="lab-footer">
+        <p><b>MOVE</b> DISTURB</p>
+        <p><b>CLICK</b> ASK AGAIN</p>
+        <p><b>WHEEL</b> RESOLVE</p>
+        <button id="identity-toggle" type="button" aria-label="在 TT1 和 TT问号之间切换">
+          <span>01</span> ASK / ANSWER
+        </button>
+      </footer>
+
+      <p class="fallback" role="status"></p>
+    </main>
+    <script type="module" src="./field.js"></script>
+  </body>
+</html>
