@@ -14,11 +14,11 @@ type Signal =
 
 type Point = { x: number; y: number };
 
-const INK = "#101014";
-const CORAL = "#ff533d";
-const CYAN = "#21c4cf";
-const BLUE = "#5265d8";
-const LIME = "#a8c51f";
+const INK = "#17131d";
+const SIGNAL = "#d06435";
+const FIELD = "#516394";
+const TRACE = "#6d5b7c";
+const SIGNAL_MUTED = "#a65f43";
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -205,7 +205,7 @@ function drawProtocolMorph(
       context,
       from,
       to,
-      selected ? CORAL : INK,
+      selected ? SIGNAL : INK,
       (selected ? .42 : .13) * communityAlpha,
     );
     context.restore();
@@ -214,7 +214,7 @@ function drawProtocolMorph(
       from,
       to,
       (time * (.075 + index * .008) + index * .21) % 1,
-      selected ? CORAL : CYAN,
+      selected ? SIGNAL : FIELD,
       (selected ? 3.2 : 2.1) * communityAlpha,
     );
   });
@@ -236,7 +236,7 @@ function drawProtocolMorph(
     context,
     { x: gate - 6, y: height * .5 + 3 },
     { x: gate, y: height * .5 + 9 },
-    LIME,
+    SIGNAL_MUTED,
     .9 * channelAlpha,
     2,
   );
@@ -244,7 +244,7 @@ function drawProtocolMorph(
     context,
     { x: gate, y: height * .5 + 9 },
     { x: gate + 11, y: height * .5 - 8 },
-    LIME,
+    SIGNAL_MUTED,
     .9 * channelAlpha,
     2,
   );
@@ -256,8 +256,8 @@ function drawProtocolMorph(
     };
     const nearGate = Math.abs(point.x - gate) < 20;
     const color = morph < .5
-      ? (node.clusterIndex % 2 ? CYAN : CORAL)
-      : (point.x > gate ? CYAN : CORAL);
+      ? (node.clusterIndex % 2 ? FIELD : SIGNAL)
+      : (point.x > gate ? FIELD : SIGNAL);
 
     dot(
       context,
@@ -392,7 +392,7 @@ function drawTransferFieldMorph(
     context,
     { x: gate - 6, y: height * .5 + 3 },
     { x: gate, y: height * .5 + 9 },
-    LIME,
+    SIGNAL_MUTED,
     .9 * channelAlpha,
     2,
   );
@@ -400,7 +400,7 @@ function drawTransferFieldMorph(
     context,
     { x: gate, y: height * .5 + 9 },
     { x: gate + 11, y: height * .5 - 8 },
-    LIME,
+    SIGNAL_MUTED,
     .9 * channelAlpha,
     2,
   );
@@ -413,8 +413,8 @@ function drawTransferFieldMorph(
   );
 
   nodes.forEach(({ point }, index) => {
-    const transferColor = point.x > gate ? CYAN : CORAL;
-    const fieldColor = index % 3 === 0 ? BLUE : INK;
+    const transferColor = point.x > gate ? FIELD : SIGNAL;
+    const fieldColor = index % 3 === 0 ? TRACE : INK;
     const nearGate = Math.abs(point.x - gate) < 20;
 
     context.save();
@@ -430,7 +430,7 @@ function drawTransferFieldMorph(
       .24 * channelAlpha + .78 * fieldAlpha,
     );
   });
-  dot(context, pointer, 18 + engaged * 8, CORAL, engaged * fieldAlpha * .08);
+  dot(context, pointer, 18 + engaged * 8, SIGNAL, engaged * fieldAlpha * .08);
 }
 
 function drawAdaptiveField(
@@ -444,9 +444,9 @@ function drawAdaptiveField(
   const nodes = adaptiveNodes(width, height, time, pointer, engaged);
   drawAdaptiveEdges(context, nodes, width);
   nodes.forEach((node, index) => {
-    dot(context, node, index % 7 === 0 ? 4 : 2.2, index % 3 === 0 ? BLUE : INK, .78);
+    dot(context, node, index % 7 === 0 ? 4 : 2.2, index % 3 === 0 ? TRACE : INK, .78);
   });
-  dot(context, pointer, 18 + engaged * 8, CORAL, engaged * .08);
+  dot(context, pointer, 18 + engaged * 8, SIGNAL, engaged * .08);
 }
 
 function eGraphNodes(width: number, height: number) {
@@ -492,7 +492,7 @@ function drawEGraphScaffold(
   const lowerPath = [input, nodes[3], nodes[0], nodes[17], nodes[14], nodes[24], nodes[21], output];
   const selectedPath = lutMode ? lowerPath : upperPath;
   const alternatePath = lutMode ? upperPath : lowerPath;
-  const selectedColor = lutMode ? CYAN : CORAL;
+  const selectedColor = lutMode ? FIELD : SIGNAL;
 
   groups.forEach((group, groupIndex) => {
     context.save();
@@ -577,7 +577,7 @@ function drawDatapath(
       context,
       node,
       selected.has(index) ? 3.5 : 2.15,
-      selected.has(index) ? (lutMode ? CYAN : CORAL) : INK,
+      selected.has(index) ? (lutMode ? FIELD : SIGNAL) : INK,
       selected.has(index) ? .92 : .5,
     );
   });
@@ -619,11 +619,11 @@ function drawFieldEGraphMorph(
       context,
       node,
       mix(index % 7 === 0 ? 4 : 2.2, active ? 3.5 : 2.15, morph),
-      active && classAlpha > .4 ? (lutMode ? CYAN : CORAL) : index % 3 === 0 ? BLUE : INK,
+      active && classAlpha > .4 ? (lutMode ? FIELD : SIGNAL) : index % 3 === 0 ? TRACE : INK,
       active ? .9 : mix(.78, .5, morph),
     );
   });
-  dot(context, pointer, 18 + engaged * 8, CORAL, engaged * networkAlpha * .08);
+  dot(context, pointer, 18 + engaged * 8, SIGNAL, engaged * networkAlpha * .08);
 }
 
 function drawOrbitTransfer(
@@ -657,7 +657,7 @@ function drawOrbitTransfer(
   });
 
   context.save();
-  context.strokeStyle = CORAL;
+  context.strokeStyle = SIGNAL;
   context.globalAlpha = .66;
   context.lineWidth = 1.5;
   context.beginPath();
@@ -673,10 +673,10 @@ function drawOrbitTransfer(
     y: focus.y + Math.sin(angle) * semiMinor,
   };
 
-  dot(context, focus, 8, LIME, .92);
-  dot(context, earth, 5, BLUE, .9);
-  dot(context, mars, 4.5, CORAL, .9);
-  dot(context, craft, 3.3, CYAN, 1);
+  dot(context, focus, 8, SIGNAL_MUTED, .92);
+  dot(context, earth, 5, TRACE, .9);
+  dot(context, mars, 4.5, SIGNAL, .9);
+  dot(context, craft, 3.3, FIELD, 1);
   line(context, focus, craft, INK, .08);
 
   const tangent = {
@@ -687,7 +687,7 @@ function drawOrbitTransfer(
     context,
     { x: craft.x - tangent.x, y: craft.y - tangent.y },
     { x: craft.x + tangent.x, y: craft.y + tangent.y },
-    CYAN,
+    FIELD,
     .8,
     1.5,
   );
@@ -718,10 +718,10 @@ function drawFocusPhases(
     ? (pointerAngle + 1.25) % 1
     : (time * .018) % 1;
   const phases = [
-    { value: 25, color: CORAL, label: "FOCUS" },
-    { value: 5, color: CYAN, label: "BREAK" },
-    { value: 25, color: CORAL, label: "FOCUS" },
-    { value: 15, color: LIME, label: "RESET" },
+    { value: 25, color: SIGNAL, label: "FOCUS" },
+    { value: 5, color: FIELD, label: "BREAK" },
+    { value: 25, color: SIGNAL, label: "FOCUS" },
+    { value: 15, color: SIGNAL_MUTED, label: "RESET" },
   ];
   const total = phases.reduce((sum, phase) => sum + phase.value, 0);
   const activePhase = Math.floor(progress * phases.length) % phases.length;
@@ -833,24 +833,24 @@ function drawCompiler(
       }
       if (stageIndex === 0) {
         context.save();
-        context.fillStyle = CORAL;
+        context.fillStyle = SIGNAL;
         context.globalAlpha = .75;
         context.fillRect(node.x - 9, node.y - 2, 18 - index * 1.5, 4);
         context.restore();
       } else if (stageIndex === stages.length - 1) {
         context.save();
-        context.fillStyle = CYAN;
+        context.fillStyle = FIELD;
         context.globalAlpha = .82;
         context.fillRect(node.x - 3, node.y - 11, 6, 22);
         context.restore();
       } else {
-        dot(context, node, 3.2, stageIndex === 1 ? BLUE : INK, .78);
+        dot(context, node, 3.2, stageIndex === 1 ? TRACE : INK, .78);
       }
     });
   });
 
   const sweepX = mix(width * .08, width * .91, sweep);
-  line(context, { x: sweepX, y: height * .18 }, { x: sweepX, y: height * .82 }, LIME, .46);
+  line(context, { x: sweepX, y: height * .18 }, { x: sweepX, y: height * .82 }, SIGNAL_MUTED, .46);
 }
 
 function drawMarketFilter(
@@ -883,7 +883,7 @@ function drawMarketFilter(
   }
 
   context.save();
-  context.strokeStyle = CORAL;
+  context.strokeStyle = SIGNAL;
   context.globalAlpha = .55;
   context.beginPath();
   context.moveTo(gate + 15, height * .15);
@@ -891,7 +891,7 @@ function drawMarketFilter(
   context.stroke();
   context.restore();
 
-  const colors = [CYAN, CORAL, BLUE];
+  const colors = [FIELD, SIGNAL, TRACE];
   for (let signal = 0; signal < 3; signal += 1) {
     const startY = height * (.34 + signal * .16);
     context.save();
@@ -1112,7 +1112,7 @@ function drawCalibrationBridge(
     context,
     { x: -width * .16, y: -2 },
     { x: width * .12, y: -2 },
-    CORAL,
+    SIGNAL,
     lineAlpha * .9,
     2,
   );
@@ -1120,7 +1120,7 @@ function drawCalibrationBridge(
     context,
     { x: width * .12, y: 2 },
     { x: width * .31, y: 2 },
-    CYAN,
+    FIELD,
     lineAlpha * .85,
     2,
   );
@@ -1213,7 +1213,7 @@ function drawOrbitTimerMorph(
     }
     nodes.slice(group.start, group.end).forEach((node, localIndex) => {
       const color = localIndex === 0
-        ? [CORAL, CYAN, LIME][groupIndex]
+        ? [SIGNAL, FIELD, SIGNAL_MUTED][groupIndex]
         : INK;
       dot(context, node, localIndex === 0 ? 3.6 : 2, color, alpha * .78);
     });
@@ -1270,7 +1270,7 @@ function drawCompilerMarketMorph(
     y: mix(point.y, target[index].y, progress),
   }));
   const alpha = Math.pow(Math.sin(progress * Math.PI), .5);
-  const colors = [CORAL, CYAN, BLUE, INK];
+  const colors = [SIGNAL, FIELD, TRACE, INK];
 
   for (let group = 0; group < 4; group += 1) {
     const start = group * 7;

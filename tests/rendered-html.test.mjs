@@ -92,6 +92,8 @@ test("ships causal hero and evidence-backed system archive with cleanup and redu
   assert.match(visual, /observer\.disconnect/);
   assert.match(glitch, /ttinker:disturb/);
   assert.match(glitch, /between\(5200,\s*14800\)/);
+  assert.match(glitch, /--glitch-primary-x/);
+  assert.match(glitch, /--glitch-signal-x/);
   assert.match(css, /\.active-system/);
   assert.match(css, /\.protocol-map/);
   assert.match(css, /\.system-index/);
@@ -100,6 +102,11 @@ test("ships causal hero and evidence-backed system archive with cleanup and redu
   assert.match(css, /protocol-packet/);
   assert.match(css, /@media \(max-width:\s*760px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(css, /--ink:\s*#17131d/);
+  assert.match(css, /--accent-primary:\s*#516394/);
+  assert.match(css, /--accent-signal:\s*#d06435/);
+  assert.match(css, /--surface-primary:\s*#2948e8/);
+  assert.doesNotMatch(css, /--(?:coral|cyan|lime):/);
   assert.match(page, /SystemsArchive/);
   assert.match(page, /Questions before conclusions/);
   assert.doesNotMatch(page, /field-strip|project-grid/);

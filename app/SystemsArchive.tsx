@@ -34,7 +34,7 @@ const systems: Array<{
     stack: "GO / HTTP RANGE / SHA-256",
     href: "https://github.com/TT1nKer/opensender",
     signal: "transfer",
-    accent: "#ef5a46",
+    accent: "#d06435",
   },
   {
     index: "002",
@@ -45,7 +45,7 @@ const systems: Array<{
     stack: "TYPESCRIPT / DYNAMICS / WEBGL",
     href: "https://github.com/TT1nKer/adaptiveNet",
     signal: "field",
-    accent: "#17aeb8",
+    accent: "#8090b5",
   },
   {
     index: "003",
@@ -56,7 +56,7 @@ const systems: Array<{
     stack: "RUST / E-GRAPHS / SYSTEMVERILOG",
     href: "https://github.com/TT1nKer/hwine",
     signal: "datapath",
-    accent: "#7357d8",
+    accent: "#9380a2",
   },
   {
     index: "004",
@@ -67,7 +67,7 @@ const systems: Array<{
     stack: "C++17 / DYNAMICS / VALIDATION",
     href: "https://github.com/TT1nKer/solar",
     signal: "orbit",
-    accent: "#c4882b",
+    accent: "#c96d47",
   },
   {
     index: "005",
@@ -78,7 +78,7 @@ const systems: Array<{
     stack: "VUE / RUST / OFFLINE",
     href: "https://github.com/TT1nKer/pomodoroAKAtimer",
     signal: "timer",
-    accent: "#dd4f73",
+    accent: "#aa7186",
   },
   {
     index: "006",
@@ -89,7 +89,7 @@ const systems: Array<{
     stack: "RISC-V / ASSEMBLY / C",
     href: "https://github.com/TT1nKer/fstCC",
     signal: "compiler",
-    accent: "#3978cc",
+    accent: "#7489b4",
   },
   {
     index: "007",
@@ -100,7 +100,7 @@ const systems: Array<{
     stack: "PYTHON / POSTGRESQL / DATA",
     href: "https://github.com/TT1nKer/StockItsMygo",
     signal: "market",
-    accent: "#7d9d34",
+    accent: "#8d8784",
   },
 ];
 

@@ -29,35 +29,36 @@ export default function GlitchTitle() {
       active = false;
       title.classList.remove("is-glitching");
       for (const property of [
-        "--title-x", "--title-y", "--title-skew", "--cyan-x", "--cyan-y",
-        "--coral-x", "--coral-y", "--cyan-clip", "--coral-clip",
+        "--title-x", "--title-y", "--title-skew",
+        "--glitch-primary-x", "--glitch-primary-y", "--glitch-primary-clip",
+        "--glitch-signal-x", "--glitch-signal-y", "--glitch-signal-clip",
       ]) {
         title.style.removeProperty(property);
       }
     };
 
     const paintFragment = (intensity: number) => {
-      const cyanTop = between(3, 78);
-      const cyanHeight = between(9, 28);
-      const coralTop = between(7, 82);
-      const coralHeight = between(8, 25);
+      const primaryTop = between(3, 78);
+      const primaryHeight = between(9, 28);
+      const signalTop = between(7, 82);
+      const signalHeight = between(8, 25);
       const reach = 8 + intensity * 26;
 
       title.classList.add("is-glitching");
       title.style.setProperty("--title-x", `${between(-3, 3) * intensity}px`);
       title.style.setProperty("--title-y", `${between(-2, 2) * intensity}px`);
       title.style.setProperty("--title-skew", `${between(-12, 12) * intensity / 10}deg`);
-      title.style.setProperty("--cyan-x", `${between(-reach, reach)}px`);
-      title.style.setProperty("--cyan-y", `${between(-5, 5)}px`);
-      title.style.setProperty("--coral-x", `${between(-reach, reach)}px`);
-      title.style.setProperty("--coral-y", `${between(-4, 4)}px`);
+      title.style.setProperty("--glitch-primary-x", `${between(-reach, reach)}px`);
+      title.style.setProperty("--glitch-primary-y", `${between(-5, 5)}px`);
+      title.style.setProperty("--glitch-signal-x", `${between(-reach, reach)}px`);
+      title.style.setProperty("--glitch-signal-y", `${between(-4, 4)}px`);
       title.style.setProperty(
-        "--cyan-clip",
-        `inset(${cyanTop}% -5% ${Math.max(0, 100 - cyanTop - cyanHeight)}% -5%)`,
+        "--glitch-primary-clip",
+        `inset(${primaryTop}% -5% ${Math.max(0, 100 - primaryTop - primaryHeight)}% -5%)`,
       );
       title.style.setProperty(
-        "--coral-clip",
-        `inset(${coralTop}% -5% ${Math.max(0, 100 - coralTop - coralHeight)}% -5%)`,
+        "--glitch-signal-clip",
+        `inset(${signalTop}% -5% ${Math.max(0, 100 - signalTop - signalHeight)}% -5%)`,
       );
     };
 
