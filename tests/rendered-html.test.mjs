@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
+async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${pathname}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("https://ttinker.net/", {
+    new Request(new URL(pathname, "https://ttinker.net"), {
       headers: { accept: "text/html" },
     }),
     {
@@ -35,11 +35,31 @@ test("renders the authored portfolio instead of starter or template copy", async
   assert.match(html, /SYSTEM INDEX/);
   assert.match(html, /FIELD NOTES/);
   assert.match(html, /chatcommons/);
+  assert.match(html, /Boltzmann Operating System/);
+  assert.match(html, /href="\/boos\/"/);
   assert.match(html, /0\.1\.0-alpha\.3/);
   assert.match(html, /chatcommons\.chat\.v2/);
   assert.match(html, /CURRENT BOUNDARY/);
   assert.doesNotMatch(html, /OWN REPOSITORIES|PEERS \/ LOCAL/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SEND IT MY WAY|RECENT WORK|LOCAL FIRST/i);
+});
+
+test("renders the AI-native Boltzmann Operating System showcase", async () => {
+  const response = await render("/boos/");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+
+  const html = await response.text();
+  assert.match(html, /<title>BoOS — Boltzmann Operating System<\/title>/i);
+  assert.match(html, /Boltzmann Operating System/i);
+  assert.match(html, /AI is the subject, not the object/i);
+  assert.match(html, /The first user[\s\S]*is[\s\S]*AI/i);
+  assert.match(html, /Native user 0/i);
+  assert.match(html, /S\s*=\s*k/i);
+  assert.match(html, /Can Enter/i);
+  assert.match(html, /Can Inhabit/i);
+  assert.match(html, /boos-ouroboros/i);
+  assert.doesNotMatch(html, /Archimedes|capability governor|memory drum/i);
 });
 
 test("ships causal hero and evidence-backed system archive with cleanup and reduced-motion coverage", async () => {
