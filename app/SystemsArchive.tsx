@@ -102,6 +102,18 @@ const systems: Array<{
     signal: "market",
     accent: "#8d8784",
   },
+  {
+    index: "008",
+    name: "BoOS",
+    kind: "Boltzmann Operating System",
+    state: "BOOTSTRAPPING",
+    description:
+      "A Boltzmann Operating System substrate whose first native user is AI.",
+    stack: "RUST / LINUX / IDENTITY / MEMORY",
+    href: "/boos/",
+    signal: "orbit",
+    accent: "#ad7b2c",
+  },
 ];
 
 const facts = [
@@ -120,9 +132,14 @@ const limits = [
   "No multi-device identity",
 ];
 
+function isExternalHref(href: string): boolean {
+  return href.startsWith("https://") || href.startsWith("http://");
+}
+
 export default function SystemsArchive() {
   const [active, setActive] = useState(0);
   const system = systems[active];
+  const systemExternal = isExternalHref(system.href);
 
   return (
     <>
@@ -214,26 +231,30 @@ export default function SystemsArchive() {
 
         <div className="system-index-grid">
           <ol className="system-list" aria-label="系统目录">
-            {systems.map((item, index) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  onPointerEnter={() => setActive(index)}
-                  onFocus={() => setActive(index)}
-                  aria-current={index === active ? "true" : undefined}
-                  aria-label={`Open ${item.name} repository`}
-                  style={{ "--system-accent": item.accent } as CSSProperties}
-                >
-                  <span>{item.index}</span>
-                  <strong>{item.name}</strong>
-                  <small>{item.kind}</small>
-                  <b>{item.state}</b>
-                  <i>↗</i>
-                </a>
-              </li>
-            ))}
+            {systems.map((item, index) => {
+              const external = isExternalHref(item.href);
+
+              return (
+                <li key={item.name}>
+                  <a
+                    href={item.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noreferrer" : undefined}
+                    onPointerEnter={() => setActive(index)}
+                    onFocus={() => setActive(index)}
+                    aria-current={index === active ? "true" : undefined}
+                    aria-label={`Open ${item.name}`}
+                    style={{ "--system-accent": item.accent } as CSSProperties}
+                  >
+                    <span>{item.index}</span>
+                    <strong>{item.name}</strong>
+                    <small>{item.kind}</small>
+                    <b>{item.state}</b>
+                    <i>{external ? "↗" : "→"}</i>
+                  </a>
+                </li>
+              );
+            })}
           </ol>
 
           <aside
@@ -251,8 +272,12 @@ export default function SystemsArchive() {
               <p>{system.description}</p>
               <footer>
                 <small>{system.stack}</small>
-                <a href={system.href} target="_blank" rel="noreferrer">
-                  OPEN REPOSITORY ↗
+                <a
+                  href={system.href}
+                  target={systemExternal ? "_blank" : undefined}
+                  rel={systemExternal ? "noreferrer" : undefined}
+                >
+                  {systemExternal ? "OPEN REPOSITORY ↗" : "OPEN SHOWCASE →"}
                 </a>
               </footer>
             </div>
