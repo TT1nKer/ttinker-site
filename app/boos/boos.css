@@ -45,6 +45,7 @@
 
 .boos-hero-copy {
   align-self: center;
+  min-width: 0;
   max-width: 900px;
   padding: 28px 0 56px;
 }

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import "./boos.css";
 
 export const metadata: Metadata = {
@@ -103,7 +102,9 @@ export default function BoOSPage() {
         <div className="boos-hero-copy">
           <div className="boos-masthead">
             <p>Boltzmann Operating System · AI-owned substrate</p>
-            <Link href="/">TT1NKER.NET / RETURN</Link>
+            {/* Static hosting has no RSC endpoint, so a native link avoids failed prefetches. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href="/">TT1NKER.NET / RETURN</a>
           </div>
 
           <p className="boos-edition">SYSTEM PROSPECTUS · REV 0.1</p>
@@ -274,7 +275,9 @@ export default function BoOSPage() {
             OPEN SOURCE ↗
           </a>
           <a href="#boos-top">TOP ↑</a>
-          <Link href="/">TT1NKER.NET →</Link>
+          {/* Static hosting has no RSC endpoint, so a native link avoids failed prefetches. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/">TT1NKER.NET →</a>
         </nav>
       </footer>
     </main>

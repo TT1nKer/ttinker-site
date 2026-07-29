@@ -46,6 +46,7 @@ test("renders the authored portfolio instead of starter or template copy", async
 
 test("renders the AI-native Boltzmann Operating System showcase", async () => {
   const response = await render("/boos/");
+  const source = await readFile(new URL("../app/boos/page.tsx", import.meta.url), "utf8");
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
@@ -63,15 +64,18 @@ test("renders the AI-native Boltzmann Operating System showcase", async () => {
   assert.match(html, /property="og:image"/i);
   assert.match(html, /name="twitter:image"/i);
   assert.doesNotMatch(html, /Archimedes|capability governor|memory drum/i);
+  assert.doesNotMatch(source, /from ["']next\/link["']/);
+  assert.doesNotMatch(source, /["']use client["']/);
 });
 
 test("ships causal hero and evidence-backed system archive with cleanup and reduced-motion coverage", async () => {
-  const [stage, archive, visual, glitch, css, page] = await Promise.all([
+  const [stage, archive, visual, glitch, css, boosCss, page] = await Promise.all([
     readFile(new URL("../app/SignalStage.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/SystemsArchive.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/ProjectVisual.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GlitchTitle.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/boos/boos.css", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
   ]);
 
@@ -130,6 +134,7 @@ test("ships causal hero and evidence-backed system archive with cleanup and redu
   assert.match(css, /--accent-signal:\s*#d06435/);
   assert.match(css, /--surface-primary:\s*#2948e8/);
   assert.doesNotMatch(css, /--(?:coral|cyan|lime):/);
+  assert.match(boosCss, /\.boos-hero-copy\s*\{[^}]*min-width:\s*0/s);
   assert.match(page, /SystemsArchive/);
   assert.match(page, /Questions before conclusions/);
   assert.doesNotMatch(page, /field-strip|project-grid/);
