@@ -12,11 +12,20 @@ export const metadata: Metadata = {
     description: "AI is the subject, not the object.",
     url: "/boos/",
     type: "website",
+    images: [
+      {
+        url: "/boos/og.png",
+        width: 1200,
+        height: 630,
+        alt: "BoOS — The first user is AI",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "BoOS — Boltzmann Operating System",
     description: "The first native user is AI.",
+    images: ["/boos/og.png"],
   },
 };
 

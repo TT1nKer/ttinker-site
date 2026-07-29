@@ -59,6 +59,9 @@ test("renders the AI-native Boltzmann Operating System showcase", async () => {
   assert.match(html, /Can Enter/i);
   assert.match(html, /Can Inhabit/i);
   assert.match(html, /boos-ouroboros/i);
+  assert.match(html, /https:\/\/ttinker\.net\/boos\/og\.png/i);
+  assert.match(html, /property="og:image"/i);
+  assert.match(html, /name="twitter:image"/i);
   assert.doesNotMatch(html, /Archimedes|capability governor|memory drum/i);
 });
 
