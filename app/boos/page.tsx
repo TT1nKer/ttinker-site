@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./boos.css";
 
 export const metadata: Metadata = {
@@ -93,7 +94,7 @@ export default function BoOSPage() {
         <div className="boos-hero-copy">
           <div className="boos-masthead">
             <p>Boltzmann Operating System · AI-owned substrate</p>
-            <a href="/">TT1NKER.NET / RETURN</a>
+            <Link href="/">TT1NKER.NET / RETURN</Link>
           </div>
 
           <p className="boos-edition">SYSTEM PROSPECTUS · REV 0.1</p>
@@ -119,6 +120,8 @@ export default function BoOSPage() {
         </div>
 
         <figure className="boos-seal">
+          {/* This pre-optimized asset must retain a stable URL in the static export. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="boos-ouroboros-image"
             src="/boos/ouroboros.webp"
@@ -262,7 +265,7 @@ export default function BoOSPage() {
             OPEN SOURCE ↗
           </a>
           <a href="#boos-top">TOP ↑</a>
-          <a href="/">TT1NKER.NET →</a>
+          <Link href="/">TT1NKER.NET →</Link>
         </nav>
       </footer>
     </main>
