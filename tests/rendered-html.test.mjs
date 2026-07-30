@@ -140,3 +140,20 @@ test("ships causal hero and evidence-backed system archive with cleanup and redu
   assert.doesNotMatch(page, /field-strip|project-grid/);
   assert.doesNotMatch(page, /\bai-town\b|\bopenclaw\b|\bMaaFramework\b/);
 });
+
+test("keeps the desktop active system as a full-viewport composition", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(
+    css,
+    /\.active-system\s*\{[^}]*min-height:\s*100svh;[^}]*display:\s*grid;[^}]*grid-template-rows:\s*auto minmax\(0,\s*1fr\) auto auto;/s,
+  );
+  assert.match(
+    css,
+    /\.active-system-grid\s*\{[^}]*min-height:\s*0;[^}]*align-content:\s*center;/s,
+  );
+  assert.match(
+    css,
+    /@media \(max-width:\s*760px\)[\s\S]*?\.active-system\s*\{[^}]*min-height:\s*0;[^}]*display:\s*block;/,
+  );
+});

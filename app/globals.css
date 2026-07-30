@@ -791,6 +791,9 @@ button:focus-visible { outline: 2px solid var(--accent-signal); outline-offset: 
 .project-static article p { margin: 0; color: #625c65; line-height: 1.5; }
 
 .active-system {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   padding: 34px 4.5vw 38px;
   color: var(--paper);
   background: var(--surface-primary);
@@ -812,11 +815,12 @@ button:focus-visible { outline: 2px solid var(--accent-signal); outline-offset: 
   font-size: clamp(9px, .65vw, 11px);
 }
 .active-system-grid {
-  min-height: min(47svh, 460px);
-  padding: clamp(62px, 9vh, 105px) 0 clamp(42px, 7vh, 76px);
+  min-height: 0;
+  padding: clamp(42px, 6vh, 72px) 0 clamp(30px, 4.5vh, 54px);
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(330px, .75fr);
   gap: clamp(55px, 10vw, 170px);
+  align-content: center;
   align-items: end;
 }
 .active-kicker {
@@ -1236,7 +1240,7 @@ button:focus-visible { outline: 2px solid var(--accent-signal); outline-offset: 
   .process-step { font-size: 6px; letter-spacing: .06em; }
   .process-step small { display: none; }
 
-  .active-system { min-height: 0; padding: 28px 20px 34px; }
+  .active-system { min-height: 0; display: block; padding: 28px 20px 34px; }
   .active-system-head span { display: none; }
   .active-system-grid {
     min-height: 0;
