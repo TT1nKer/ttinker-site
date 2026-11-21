@@ -1,0 +1,200 @@
+.transfer-study {
+  --transfer-paper: #e9e6ed;
+  --transfer-ink: #201e23;
+  --transfer-accent: #aa3e2a;
+  --transfer-secondary: #5b5660;
+  --transfer-rule: #bbb5c0;
+  background: var(--transfer-paper);
+  color: var(--transfer-ink);
+  font-family: var(--work-sans, "Work Sans"), Arial, sans-serif;
+  padding-block: clamp(64px, 7.8vw, 120px) clamp(64px, 6.6vw, 100px);
+  scroll-margin-top: 20px;
+}
+
+.transfer-study *, .transfer-study *::before, .transfer-study *::after {
+  box-sizing: border-box;
+}
+
+.transfer-study :is(h2, p, figure, dl, dt, dd) { margin: 0; }
+.transfer-study a { color: inherit; }
+.transfer-study ::selection { color: #fff; background: var(--transfer-accent); }
+
+.transfer-study .transfer-eyebrow,
+.transfer-study .transfer-result-label,
+.transfer-study .transfer-unit,
+.transfer-study .transfer-conditions dt,
+.transfer-study .transfer-chart-head,
+.transfer-study .transfer-tick {
+  font-family: var(--work-mono, "IBM Plex Mono"), monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.transfer-study .transfer-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid currentColor;
+  padding-top: 15px;
+}
+
+.transfer-study .transfer-intro {
+  display: grid;
+  grid-template-columns: 1.04fr 1fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: end;
+  padding-block: 47px 59px;
+}
+
+.transfer-study .transfer-intro h2 {
+  font-size: clamp(53px, 6.5vw, 96px);
+  line-height: .97;
+  letter-spacing: -.075em;
+  font-weight: 550;
+}
+
+.transfer-study .transfer-intro > p {
+  max-width: 40em;
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 400;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.transfer-study .transfer-evidence {
+  display: grid;
+  grid-template-columns: minmax(245px, .67fr) minmax(0, 1.48fr);
+  column-gap: clamp(38px, 5.4vw, 90px);
+  row-gap: 0;
+  align-items: start;
+  padding-block: 37px 42px;
+  border-top: 1px solid var(--transfer-rule);
+}
+
+.transfer-study .transfer-result { padding-top: 7px; grid-row: 1 / 3; }
+.transfer-study .transfer-result-label { color: var(--transfer-secondary); }
+.transfer-study .transfer-reading { margin-top: 29px; }
+.transfer-study .transfer-number {
+  display: block;
+  color: var(--transfer-accent);
+  font-size: clamp(96px, 10.3vw, 158px);
+  font-weight: 450;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -.085em;
+  line-height: .83;
+}
+.transfer-study .transfer-unit {
+  display: block;
+  color: var(--transfer-accent);
+  font-size: 15px;
+  margin-top: 17px;
+}
+.transfer-study .transfer-result-detail {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-top: 29px;
+}
+
+.transfer-study .transfer-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  color: var(--transfer-ink);
+  fill: currentColor;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.transfer-study .transfer-chart-head { font-size: 14px; }
+.transfer-study .transfer-zero { stroke: #8b8491; stroke-width: 1; }
+.transfer-study .transfer-guide { stroke: #c9c3ce; stroke-width: 1; }
+.transfer-study .transfer-tick { fill: var(--transfer-secondary); font-size: 14px; }
+.transfer-study .transfer-worker-count { font-size: 25px; font-weight: 450; letter-spacing: -.045em; }
+.transfer-study .transfer-value { font-size: 36px; font-weight: 500; letter-spacing: -.065em; }
+.transfer-study .transfer-run-best { color: var(--transfer-accent); fill: currentColor; }
+.transfer-study .transfer-evidence > figcaption {
+  grid-column: 2;
+  max-width: 30em;
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.25;
+  letter-spacing: -.035em;
+  margin-top: 0;
+  text-wrap: balance;
+}
+
+.transfer-study .transfer-conditions {
+  display: grid;
+  grid-template-columns: .88fr 1.5fr 1.25fr .7fr;
+  gap: 28px;
+  padding-block: 22px 25px;
+  border-top: 1px solid var(--transfer-rule);
+  border-bottom: 1px solid var(--transfer-rule);
+}
+.transfer-study .transfer-conditions dt { color: var(--transfer-secondary); }
+.transfer-study .transfer-conditions dd {
+  margin-top: 9px;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -.02em;
+}
+
+.transfer-study .transfer-source-row {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+  padding-top: 24px;
+}
+.transfer-study .transfer-source-row > p {
+  color: var(--transfer-secondary);
+  max-width: 47em;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.transfer-study .transfer-links {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding-top: 1px;
+}
+.transfer-study .transfer-links a {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.transfer-study .transfer-links a:hover { color: var(--transfer-accent); }
+.transfer-study .transfer-links a:focus-visible {
+  outline: 2px solid var(--transfer-accent);
+  outline-offset: 5px;
+}
+
+@media (max-width: 800px) {
+  .transfer-study .transfer-intro { gap: 28px; padding-block: 34px 36px; }
+  .transfer-study .transfer-intro h2 { font-size: clamp(42px, 7vw, 56px); }
+  .transfer-study .transfer-intro > p { font-size: 15px; }
+  .transfer-study .transfer-evidence { grid-template-columns: minmax(190px, .7fr) minmax(0, 1.4fr); gap: 28px; }
+  .transfer-study .transfer-number { font-size: 90px; }
+  .transfer-study .transfer-result-detail { font-size: 14px; margin-top: 20px; }
+  .transfer-study .transfer-conditions { grid-template-columns: 1fr 1fr; gap: 22px 30px; }
+  .transfer-study .transfer-source-row { grid-template-columns: 1fr; gap: 20px; }
+  .transfer-study .transfer-links { justify-content: flex-start; }
+}
+
+@media (max-width: 540px) {
+  .transfer-study .transfer-intro { grid-template-columns: 1fr; gap: 22px; }
+  .transfer-study .transfer-intro h2 { font-size: 56px; }
+  .transfer-study .transfer-evidence { grid-template-columns: 1fr; gap: 20px; }
+  .transfer-study .transfer-evidence > figcaption { grid-column: auto; }
+  .transfer-study .transfer-result { grid-row: auto; display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 18px 22px; margin-bottom: 14px; }
+  .transfer-study .transfer-result-label { grid-column: 1/-1; }
+  .transfer-study .transfer-reading { margin-top: 0; }
+  .transfer-study .transfer-number { font-size: 92px; }
+  .transfer-study .transfer-result-detail { margin: 0 0 3px; max-width: 11em; }
+  .transfer-study .transfer-chart-head, .transfer-study .transfer-tick { font-size: 20px; }
+  .transfer-study .transfer-worker-count { font-size: 30px; }
+  .transfer-study .transfer-value { font-size: 41px; }
+  .transfer-study .transfer-conditions dd { font-size: 14px; }
+}

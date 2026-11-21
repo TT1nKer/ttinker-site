@@ -34,8 +34,8 @@ export function cleanHomeHtml(renderedHtml) {
   }
   const main = mains[0][0];
   const opening = main.slice(0, main.indexOf(">") + 1);
-  if (!/\bid="top"/.test(opening) || !/\bclass="[^"]*\batlas\b[^"]*"/.test(opening)) {
-    throw new Error("Homepage export requires main#top.atlas");
+  if (!/\bid="top"/.test(opening) || !/\bclass="[^"]*\bportfolio\b[^"]*"/.test(opening)) {
+    throw new Error("Homepage export requires main#top.portfolio");
   }
   if (/<(?:script|style|link)\b/i.test(main)) {
     throw new Error("Homepage resources must be outside its main element");
@@ -52,7 +52,7 @@ export function cleanHomeHtml(renderedHtml) {
   }
 
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -61,9 +61,9 @@ ${metadata.join("\n")}
 <link rel="canonical" href="https://ttinker.net/">
 <link rel="icon" href="/favicon-tt-question-v1.png" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-tt-question-v1.png">
-<link rel="stylesheet" href="/home-atlas/home.css">
-<script src="/home-atlas/plates.js" defer></script>
-<script src="/home-atlas/home.js" defer></script>
+<link rel="stylesheet" href="/portfolio/work.css">
+<link rel="stylesheet" href="/portfolio/transfer.css">
+<script src="/portfolio/work.js" defer></script>
 </head>
 <body>
 ${main}
@@ -73,13 +73,13 @@ ${main}
 }
 
 export async function versionHomeAssets(html) {
-  const files = ["home.css", "plates.js", "home.js", "first-plate.png", "social.png"];
+  const files = ["work.css", "transfer.css", "work.js", "social.png"];
   const versions = await Promise.all(files.map(async (file) => {
-    const bytes = await readFile(new URL(`../dist/client/home-atlas/${file}`, import.meta.url));
+    const bytes = await readFile(new URL(`../dist/client/portfolio/${file}`, import.meta.url));
     return [file, createHash("sha256").update(bytes).digest("hex").slice(0, 12)];
   }));
   for (const [file, version] of versions) {
-    const path = `/home-atlas/${file}`;
+    const path = `/portfolio/${file}`;
     const escaped = path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     // Includes absolute social-image URLs and replaces an existing version if
     // called again. Only the root HTML changes; original filenames stay intact.

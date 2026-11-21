@@ -1,7 +1,9 @@
-# TT1nKer personal site
+# TT1nKer systems software portfolio
 
-The homepage is authored in `app/page.tsx` and exported as plain HTML. Its CSS,
-local fonts, illustrations and interaction scripts live in `public/home-atlas/`.
+The English portfolio is authored in `app/page.tsx` and exported as plain HTML. It
+presents a compiler work sample, a file-transfer study and supporting technical
+projects with direct source links. Its CSS, local fonts, illustrations and
+interaction scripts live in `public/portfolio/`.
 `npm run export` builds the app, renders both routes, and writes `out/`. The root
 export keeps the server-rendered `<main>` and metadata, with no React runtime,
 RSC payload, shared stylesheet or external font dependency. `/boos/` retains its
@@ -10,7 +12,7 @@ query version so subsequent releases bypass stale browser caches. `npm test`
 checks both routes and the isolated home assets.
 
 For the existing Nginx host, start a new release from the **current live release**
-and replace only `out/index.html` and `out/home-atlas/`. Do not replace the whole
+and replace only `out/index.html` and `out/portfolio/`. Do not replace the whole
 release with `out/`: `/boos/` still needs the live release's hashed `assets/` files,
 and `/RedNoteCover/` is maintained separately. Keep the existing icons, all other
 site paths, proxy routes and blog data. Verify the candidate before switching the

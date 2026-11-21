@@ -53,23 +53,25 @@ test("exports the exact SSR main with an independent document and current metada
   assert.equal(response.status, 200);
   assert.equal(home, await versionHomeAssets(cleanHomeHtml(await response.text())));
   assert.equal((home.match(/<main\b/g) ?? []).length, 1);
-  assert.match(home, /<title>TT1nKer · 个人项目与随记<\/title>/);
-  assert.match(home, /<meta name="description" content="TT1nKer 的个人主页。浏览程序、网络与计算实验，阅读留白博客。"/);
-  assert.match(home, /property="og:image" content="https:\/\/ttinker\.net\/home-atlas\/social\.png\?v=[a-f0-9]{12}"/);
-  assert.match(home, /name="twitter:image" content="https:\/\/ttinker\.net\/home-atlas\/social\.png\?v=[a-f0-9]{12}"/);
+  assert.match(home, /<html lang="en">/);
+  assert.match(home, /<title>TT1nKer \| Systems Software Portfolio<\/title>/);
+  assert.match(home, /<meta name="description" content="Systems software projects by TT1nKer, with source code and implementation details across networking, compilers, hardware optimization, and simulation\."/);
+  assert.match(home, /property="og:image" content="https:\/\/ttinker\.net\/portfolio\/social\.png\?v=[a-f0-9]{12}"/);
+  assert.match(home, /name="twitter:image" content="https:\/\/ttinker\.net\/portfolio\/social\.png\?v=[a-f0-9]{12}"/);
   assert.match(home, /rel="canonical" href="https:\/\/ttinker\.net\/"/);
-  assert.match(home, /href="\/liubai\/"/);
-  assert.match(home, /href="\/boos\/"/);
+  assert.doesNotMatch(home, /\/liubai\/|\bblog\b|journal-teaser|data-latest|latest-story|question-driven|question-led/i);
+  assert.doesNotMatch(home.replace(/<[^>]*>/g, ""), /\p{Script=Han}/u);
+  assert.doesNotMatch(home, /home-atlas|first-plate|plates\.js|<canvas\b|data-project=/i);
   assert.doesNotMatch(home, /__vite|__rsc|__next|modulepreload|data-rsc|geist|\/assets\/|og-editorial|fonts\.google/i);
-  assert.equal((home.match(/<script\b/g) ?? []).length, 2);
-  assert.match(home, /<script src="\/home-atlas\/plates\.js\?v=[a-f0-9]{12}" defer><\/script>\s*<script src="\/home-atlas\/home\.js\?v=[a-f0-9]{12}" defer><\/script>/);
-  assert.deepEqual([...home.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)].map(([, href]) => localPath(href)), ["home-atlas/home.css"]);
+  assert.equal((home.match(/<script\b/g) ?? []).length, 1);
+  assert.match(home, /<script src="\/portfolio\/work\.js\?v=[a-f0-9]{12}" defer><\/script>/);
+  assert.deepEqual([...home.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)].map(([, href]) => localPath(href)), ["portfolio/work.css", "portfolio/transfer.css"]);
 });
 
 test("versions every home CSS, script and image URL from its own exported bytes", async () => {
   const references = [...home.matchAll(/(?:src|href|content)="([^"]+)"/g)].map(([, value]) => value);
-  for (const file of ["home.css", "plates.js", "home.js", "first-plate.png", "social.png"]) {
-    const path = `/home-atlas/${file}`;
+  for (const file of ["work.css", "transfer.css", "work.js", "social.png"]) {
+    const path = `/portfolio/${file}`;
     const bytes = await readFile(new URL(`../dist/client${path}`, import.meta.url));
     const expected = createHash("sha256").update(bytes).digest("hex").slice(0, 12);
     const matching = references.filter((value) => value.startsWith(path) || value.startsWith(`https://ttinker.net${path}`));
@@ -83,11 +85,11 @@ test("versions every home CSS, script and image URL from its own exported bytes"
   assert.equal(await versionHomeAssets(home), home, "Asset versioning must be idempotent");
 });
 
-test("the homepage deploys with only index, home-atlas and the existing site icons", async () => {
+test("the homepage deploys with only index, portfolio and the existing site icons", async () => {
   const candidate = await mkdtemp(join(tmpdir(), "ttinker-home-export-"));
   try {
     await cp(new URL("../out/index.html", import.meta.url), join(candidate, "index.html"));
-    await cp(new URL("../out/home-atlas/", import.meta.url), join(candidate, "home-atlas"), { recursive: true });
+    await cp(new URL("../out/portfolio/", import.meta.url), join(candidate, "portfolio"), { recursive: true });
     // These files already exist on the production root and are deliberately not
     // part of the homepage replacement, unlike /assets used by the BoOS route.
     for (const icon of ["favicon-tt-question-v1.png", "apple-touch-tt-question-v1.png"]) {
@@ -95,17 +97,22 @@ test("the homepage deploys with only index, home-atlas and the existing site ico
     }
     for (const reference of resources(home)) {
       const path = localPath(reference);
-      assert.ok(path.startsWith("home-atlas/") || /^(favicon|apple-touch)-tt-question-v1\.png$/.test(path), path);
+      assert.ok(path.startsWith("portfolio/") || /^(favicon|apple-touch)-tt-question-v1\.png$/.test(path), path);
       await existsAt(candidate, path);
     }
-    const css = await readFile(join(candidate, "home-atlas/home.css"), "utf8");
-    for (const [, reference] of css.matchAll(/url\(\s*["']?([^\s"')]+)["']?\s*\)/g)) {
-      if (reference.startsWith("data:")) continue;
-      const path = localPath(reference, "https://ttinker.net/home-atlas/home.css");
-      assert.ok(path.startsWith("home-atlas/"), `CSS escapes the homepage asset directory: ${path}`);
-      await existsAt(candidate, path);
+    for (const stylesheet of ["work.css", "transfer.css"]) {
+      const css = await readFile(join(candidate, "portfolio", stylesheet), "utf8");
+      for (const [, reference] of css.matchAll(/url\(\s*["']?([^\s"')]+)["']?\s*\)/g)) {
+        if (reference.startsWith("data:")) continue;
+        const path = localPath(reference, `https://ttinker.net/portfolio/${stylesheet}`);
+        assert.ok(path.startsWith("portfolio/"), `CSS escapes the homepage asset directory: ${path}`);
+        await existsAt(candidate, path);
+      }
     }
-    const social = await readFile(join(candidate, "home-atlas/social.png"));
+    const interaction = await readFile(join(candidate, "portfolio/work.js"), "utf8");
+    assert.doesNotMatch(interaction, /\/liubai\/|\bblog\b|journal-teaser|data-latest|latest-story|loadLatest|\/api\/posts|\bfetch\s*\(/i);
+    assert.doesNotMatch(interaction, /\p{Script=Han}/u);
+    const social = await readFile(join(candidate, "portfolio/social.png"));
     assert.equal(social.subarray(1, 4).toString(), "PNG");
     assert.equal(social.readUInt32BE(16), 1200);
     assert.equal(social.readUInt32BE(20), 630);
@@ -128,7 +135,7 @@ test("exports BoOS unchanged and preserves all of its independent build assets",
   assert.match(boos, /Native user 0/i);
   assert.match(boos, /rel="canonical" href="https:\/\/ttinker\.net\/boos\/"/);
   assert.match(boos, /https:\/\/ttinker\.net\/boos\/og\.png/);
-  assert.doesNotMatch(boos, /home-atlas\//);
+  assert.doesNotMatch(boos, /portfolio\//);
   const paths = resources(boos).map((reference) => localPath(reference));
   assert.ok(paths.some((path) => path.startsWith("assets/") && path.endsWith(".js")));
   assert.ok(paths.some((path) => path.startsWith("assets/") && path.endsWith(".css")));
@@ -145,11 +152,11 @@ test("refuses malformed home markup instead of exporting a partly stripped docum
   const head = '<title>Example &amp; title</title><meta name="description" content="A &amp; B">';
   const document = (body) => `<!doctype html><html><head>${head}</head><body>${body}</body></html>`;
   assert.throws(() => cleanHomeHtml(document("<div>No main</div>")), /exactly one/);
-  assert.throws(() => cleanHomeHtml(document('<main id="top" class="atlas"><main>nested</main></main>')), /non-nested/);
-  assert.throws(() => cleanHomeHtml(document('<main id="top" class="atlas"></main><main>other</main>')), /exactly one/);
-  assert.throws(() => cleanHomeHtml(document('<main class="old-site">old layout</main>')), /main#top.atlas/);
-  assert.throws(() => cleanHomeHtml(document('<main id="top" class="atlas"><script>legacy()</script></main>')), /resources must be outside/);
-  const result = cleanHomeHtml(document('<main id="top" class="atlas"><p>SSR content &amp; punctuation.</p></main><script>old hydration()</script>'));
+  assert.throws(() => cleanHomeHtml(document('<main id="top" class="portfolio"><main>nested</main></main>')), /non-nested/);
+  assert.throws(() => cleanHomeHtml(document('<main id="top" class="portfolio"></main><main>other</main>')), /exactly one/);
+  assert.throws(() => cleanHomeHtml(document('<main class="old-site">old layout</main>')), /main#top.portfolio/);
+  assert.throws(() => cleanHomeHtml(document('<main id="top" class="portfolio"><script>legacy()</script></main>')), /resources must be outside/);
+  const result = cleanHomeHtml(document('<main id="top" class="portfolio"><p>SSR content &amp; punctuation.</p></main><script>old hydration()</script>'));
   assert.match(result, /<title>Example &amp; title<\/title>/);
   assert.match(result, /<p>SSR content &amp; punctuation\.<\/p>/);
   assert.doesNotMatch(result, /old hydration/);

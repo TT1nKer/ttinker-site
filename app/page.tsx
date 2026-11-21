@@ -1,106 +1,103 @@
-import { projects } from "./atlas-projects";
+import { compilerSample as sample, type CompilerCorrespondenceRow } from "./compiler-sample";
+import TransferStudy from "./TransferStudy";
 
-const issue = "https://github.com/TT1nKer/";
-const notes = [
-  ["chatcommons", "如果社区服务器关了，聊天记录还在谁手里？", issue + "chatcommons/blob/main/docs/governance/control-boundaries.md"],
-  ["opensender", "一条连接跑不满带宽的时候，还能怎么传？", issue + "opensender"],
-  ["fstCC", "从汇编开始，写一个 C 编译器要走多远？", issue + "fstCC"],
+const github = "https://github.com/TT1nKer";
+const compiler = github + "/fstCC";
+const studies = [
+  { id: "chatcommons", name: "ChatCommons", field: "Distributed systems", description: "An offline-first chat protocol. Devices sign their own events and exchange them over QUIC, directly or through a relay.", link: github + "/chatcommons/blob/main/docs/protocol.md", action: "Read the protocol", repo: github + "/chatcommons" },
+  { id: "hwine", name: "hwine", field: "Hardware synthesis", description: "An FPGA arithmetic optimizer that generates SystemVerilog circuits, checks equivalence, and compares area and timing.", link: github + "/hwine/blob/main/docs/PROJECT_STATUS.md", action: "See the results", repo: github + "/hwine" },
+  { id: "adaptiveNet", name: "adaptiveNet", field: "Scientific computing", description: "Eleven browser experiments in dynamical systems, from reaction–diffusion patterns to Hopfield memory.", link: "https://tt1nker.github.io/adaptiveNet/index.html", action: "Open the lab", repo: github + "/adaptiveNet" },
+  { id: "solar", name: "solar", field: "Orbital mechanics", description: "A C++17 orbital mechanics sandbox. The Earth–Mars transfer example compares the computed trajectory with reference values.", link: github + "/solar/blob/main/docs/validation/02_hohmann_earth_mars.md", action: "Read the calculation", repo: github + "/solar" },
+  { id: "BoOS", name: "BoOS", field: "Operating systems", description: "A Linux runtime experiment with separate user identities, private state, and persistent request queues.", link: "/boos/", action: "Project overview", repo: "https://github.com/BoltzmannOS-BoOS/minimalLinuxCore" },
+  { id: "pomodoroAKAtimer", name: "pomodoroAKAtimer", field: "Browser tools", description: "An offline Vue timer with custom work intervals, local session history, and generated ambient sound.", link: "https://ttinker.net/pomodoro/", action: "Open the timer", repo: github + "/pomodoroAKAtimer" },
+  { id: "StockItsMygo", name: "StockItsMygo", field: "Data engineering", description: "A self-hosted market dashboard with historical prices in TimescaleDB and separate watchlists for each user.", link: github + "/StockItsMygo", action: "Source code" },
 ];
 
 export default function Home() {
-  const first = projects[0];
+  const rows: CompilerCorrespondenceRow[] = sample.rows;
+  const selectable = sample.source.lines.flatMap(line => {
+    const matches = rows.filter(row => row.sourceLines.includes(line.number));
+    if (!matches.length) return [];
+    const last = matches[matches.length - 1];
+    return [{
+      ...last,
+      assemblyLines: matches.flatMap(row => row.assemblyLines),
+      note: matches.length > 1 ? "Load doubled into the return register, restore the caller’s stack frame, and return to the entry point." : last.note,
+    }];
+  });
+  const initial = selectable.find(row => row.mnemonic === "addw")!;
   return (
     <>
-      <link rel="stylesheet" href="/home-atlas/home.css" />
-      <script src="/home-atlas/plates.js" defer></script>
-      <script src="/home-atlas/home.js" defer></script>
-      <main id="top" className="atlas">
-        <a href="#systems" className="atlas-skip">直接浏览项目</a>
-        <div className="folio">
-          <header className="navigation">
-            <a className="domain" href="#top" aria-label="ttinker.net 首页"><i className="maker-mark" aria-hidden="true"></i>ttinker.net</a>
-            <nav aria-label="主导航">
-              <a href="#systems">项目</a>
-              <a href="/liubai/">留白</a>
-              <a lang="en" href="https://github.com/TT1nKer">GitHub</a>
-            </nav>
-          </header>
+      <link rel="stylesheet" href="/portfolio/work.css" />
+      <link rel="stylesheet" href="/portfolio/transfer.css" />
+      <script src="/portfolio/work.js" defer></script>
+      <main id="top" className="portfolio">
+        <a className="skip" href="#compiler">Skip to work</a>
+        <header className="mastbar wrap">
+          <div className="identity"><a href="#top" aria-label="TT1nKer home">TT1nKer</a><span>Systems software portfolio</span></div>
+          <nav aria-label="Main navigation"><a href="#transfer">File transfer</a><a href="#projects">Other work</a><a href={github}>GitHub</a></nav>
+        </header>
 
-          <div className="mast">
-            <h1 className="signature" aria-label="TT1nKer"><span>TT</span><i>1</i><span>nKer</span></h1>
-            <div className="journal-teaser">
-              <a className="teaser-section" href="/liubai/"><i className="journal-mark" aria-hidden="true"></i>留白<span>个人随记</span></a>
-              <a data-latest-link className="latest-story" href="/liubai/">翻开随记</a>
-              <time data-latest-date className="story-date"></time>
-            </div>
+        <section id="compiler" className="compiler wrap" aria-labelledby="compiler-title">
+          <div className="case-head" id="p-fstCC">
+            <div className="case-lede"><h1 id="compiler-title">fstCC</h1><p>A C compiler I wrote in RISC-V assembly.</p></div>
+            <a className="text-link" href={compiler}>Compiler source</a>
           </div>
-
-          <div className="spread" id="systems">
-            <div className="exhibit">
-              <figure className="instrument">
-                <div className="plate-heading">
-                  <strong className="plate-title" data-plate-heading>{first.title}</strong>
-                  <span className="plate-tag">过程图解</span>
-                </div>
-                <div className="plate-stage">
-                  <img className="first-plate" src="/home-atlas/first-plate.png" alt="" width="1200" height="514" />
-                  <canvas data-plate role="img" aria-label={first.title}></canvas>
-                </div>
-                <figcaption className="transport" data-transport hidden>
-                  <button type="button" className="play" data-play aria-label="播放图解" aria-pressed="false"><span aria-hidden="true"></span></button>
-                  <span className="phase-caption" data-phase>{first.stage[1]}</span>
-                  <input type="range" min="0" max="100" step="1" defaultValue="62" data-scrub aria-label="图解进度" />
-                </figcaption>
-              </figure>
-              <div className="project-reading">
-                {projects.map((p, i) => (
-                  <article key={p.id} id={"reading-" + p.id} data-article={p.id} data-stages={JSON.stringify(p.stage)} data-category={p.category} hidden={i !== 0}>
-                    <header className="reading-head">
-                      <h2 data-project-title>{p.name}</h2>
-                      <span className="category">{p.category}</span>
-                    </header>
-                    <span data-question hidden>{p.title}</span>
-                    <p className="project-body">{p.body}</p>
-                    <div className="destinations">
-                      {p.links.map(link => <a className="resource-link" href={link.href} key={link.href}>{link.label}</a>)}
-                    </div>
-                    <details className="specs">
-                      <summary>技术细节</summary>
-                      <dl>{p.facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-                      {"footnote" in p && p.footnote && <p>{p.footnote}</p>}
-                    </details>
-                  </article>
-                ))}
+          <div className="workbench" data-trace>
+            <div className="source-side">
+              <div className="fileline"><span>Source</span><code>{sample.source.file.split("/").pop()}</code></div>
+              <div className="big-token" data-expression aria-hidden="true">{initial.expression}</div>
+              <p className="trace-help" hidden>Select a line to trace its instructions.</p>
+              <div className="source-code" aria-label="C source statements">
+                {sample.source.lines.map(line => {
+                  const row = selectable.find(r => r.sourceLines.includes(line.number));
+                  return row ? <button disabled type="button" className="statement" key={line.number} data-trace-key={row.id} data-expression-value={row.expression} data-mnemonic-value={row.mnemonic} aria-pressed={row === initial} aria-controls={"asm-" + row.id}><span className="lineno" aria-hidden="true">{line.number}</span><code>{line.text}</code></button>
+                    : <div className="statement passive" key={line.number}><span className="lineno">{line.number}</span><code>{line.text}</code></div>;
+                })}
+              </div>
+              <div className="wires" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div className="printout">
+              <div className="fileline"><span>Compiler output</span><code>{sample.assembly.file.split("/").pop()} · RV64IM</code></div>
+              <div className="big-token operator" data-mnemonic aria-hidden="true">{initial.mnemonic}</div>
+              <div className="excerpts" aria-live="polite">
+                {selectable.map(row => <div key={row.id} id={"asm-" + row.id} data-asm-group={row.id} className={row === initial ? "is-active" : ""} hidden={row !== initial}>
+                  <div className="asm-lines">{row.assemblyLines.map(num => {
+                    const line = sample.assembly.lines[num - 1];
+                    return <div className={"asm-line" + (num === row.instructionLine ? " primary-op" : "")} key={num}><span className="lineno" aria-hidden="true">{num}</span><code>{line.text.trimStart().replaceAll("\t", "  ")}</code></div>;
+                  })}</div>
+                  <p className="trace-note">{row.note}</p>
+                </div>)}
               </div>
             </div>
-
-            <span className="atlas-visually-hidden" role="status" data-selection-status></span>
-            <aside className="ledger" aria-label="项目目录">
-              <div className="ledger-head"><h2>项目目录</h2><span>{String(projects.length).padStart(2, "0")} 项</span></div>
-              <ol className="rows">
-                {projects.map((p, i) => (
-                  <li key={p.id}>
-                    <a data-project={p.id} href={p.links[0].href} aria-controls={"reading-" + p.id} aria-current={i === 0 ? "true" : undefined} className="project-row">
-                      <span className="project-name" lang="en">{p.name}</span><span className="row-caption">{p.category}</span>
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </aside>
           </div>
+          <div className="run-metadata">
+            <span className="run-result">QEMU exit status <b>42</b></span>
+            <a href={compiler + "/tree/" + sample.evidence.commit}>fstCC <code>{sample.evidence.commit.slice(0, 7)}</code></a>
+          </div>
+          <details className="full-run">
+            <summary>Full compiler output</summary>
+            <p className="listing-method">The line mapping was checked by hand against this listing. The compiled program and its GCC reference both returned 42.</p>
+            <pre><code>{sample.assembly.text}</code></pre>
+            <a className="text-link" href={compiler + "/tree/" + sample.evidence.commit + "#reproduce-from-a-clean-checkout"}>Build and verify fstCC</a>
+          </details>
+        </section>
 
-          <section id="notes" className="field-notes" aria-labelledby="notes-title">
-            <div className="notes-heading"><h2 id="notes-title">手头的问题</h2></div>
-            <div className="note-list">{notes.map(([project, title, href]) => (
-              <a href={href} key={project}><span>{project}</span><strong>{title}</strong></a>
-            ))}</div>
-          </section>
+        <TransferStudy />
 
-          <footer className="colophon">
-            <span>TT1nKer</span>
-            <nav aria-label="页脚"><a href="/liubai/">留白博客</a><a href="https://github.com/TT1nKer">GitHub</a><a href="#top">回到页首</a></nav>
-          </footer>
-        </div>
+        <section className="more" id="projects" aria-labelledby="more-title">
+          <div className="wrap more-layout">
+            <h2 id="more-title">Other work</h2>
+            <div className="other-list">
+              {studies.map(p => <article id={"p-" + p.id} key={p.id}>
+                <header><h3><a href={p.link}>{p.name}</a></h3><span>{p.field}</span></header>
+                <p>{p.description}</p>
+                <div className="other-links"><a href={p.link}>{p.action}</a>{p.repo && <a href={p.repo}>Source code</a>}</div>
+              </article>)}
+            </div>
+          </div>
+        </section>
+        <footer className="sitefoot wrap"><a href="#top">TT1nKer</a><a href={github}>GitHub profile</a></footer>
       </main>
     </>
   );

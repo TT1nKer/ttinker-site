@@ -23,38 +23,66 @@ async function render(pathname = "/") {
   );
 }
 
-test("renders the complete Chinese project directory and useful destinations on the server", async () => {
+test("renders the English portfolio with complete work samples and real project destinations", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
-  assert.match(html, /<title>TT1nKer · 个人项目与随记<\/title>/);
-  assert.match(html, /<main id="top" class="atlas">/);
-  assert.match(html, /href="\/liubai\/"/);
-  assert.match(html, /href="\/boos\/"/);
-  assert.match(html, /href="https:\/\/ttinker\.net\/pomodoro\/"/);
-  assert.match(html, /href="https:\/\/github\.com\/TT1nKer"/);
-  assert.match(html, /href="https:\/\/tt1nker\.github\.io\/adaptiveNet\/index\.zh\.html"/);
-
-  const projects = ["chatcommons", "opensender", "adaptiveNet", "hwine", "solar", "pomodoroAKAtimer", "fstCC", "StockItsMygo", "BoOS"];
-  const articles = [...html.matchAll(/<article\b[^>]*data-article="([^"]+)"[^>]*>[\s\S]*?<\/article>/g)];
-  assert.deepEqual(articles.map(([, id]) => id), projects);
-  for (const [article, id] of articles) {
-    assert.match(article, /<h2\b/);
-    assert.match(article, /<details\b/);
-    assert.match(article, /<a\b[^>]*href="(?:https:\/\/|\/boos\/)/);
-    assert.match(html, new RegExp(`data-project="${id}"`));
+  assert.match(html, /<html lang="en">/);
+  assert.match(html, /<title>TT1nKer \| Systems Software Portfolio<\/title>/);
+  const main = html.match(/<main id="top" class="portfolio">[\s\S]*?<\/main>/)?.[0];
+  assert.ok(main, "The portfolio must be server-rendered without nested main elements");
+  for (const section of ["compiler", "transfer", "projects"]) {
+    assert.match(main, new RegExp(`<section\\b[^>]*id="${section}"`));
   }
-  assert.match(articles[0][0], /0\.1\.0-alpha\.7/);
-  assert.match(articles[0][0], /暂无正式托管服务/);
-  assert.doesNotMatch(articles[0][0].split(">")[0], /\bhidden/);
-  for (const [article] of articles.slice(1)) assert.match(article.split(">")[0], /\bhidden/);
-  assert.match(html, /<input\b[^>]*type="range"[^>]*aria-label="图解进度"/);
-  assert.match(html, /data-play[^>]*aria-label="播放图解"[^>]*aria-pressed="false"/);
-  assert.match(html, /<canvas\b[^>]*role="img"[^>]*aria-label="[^"]+"/);
-  assert.doesNotMatch(html, /Your site is taking shape|SEND IT MY WAY|CURRENT BOUNDARY|ACTIVE SYSTEM/);
+  assert.doesNotMatch(main, /\/liubai\/|\bblog\b|journal-teaser|data-latest|latest-story|question-driven|question-led/i);
+  assert.doesNotMatch(main, /home-atlas|first-plate|plates\.js|<canvas\b|class="[^"]*\bledger\b|data-(?:plate|scrub|play|project)=["']/i);
+  assert.doesNotMatch(main.replace(/<[^>]*>/g, ""), /\p{Script=Han}/u);
+  for (const [, heading] of main.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/g)) {
+    const text = heading.replace(/<[^>]*>/g, "").trim();
+    assert.ok(text);
+    assert.doesNotMatch(text, /[?？]/u);
+    assert.doesNotMatch(text, /^(?:how|why|what|which|when|where|can|could|should|would|does|do|is|are)\b/i);
+  }
+  const links = [...main.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+  const targets = [
+    ["chatcommons", /^https:\/\/github\.com\/TT1nKer\/chatcommons(?:[\/#]|$)/],
+    ["opensender", /^https:\/\/github\.com\/TT1nKer\/opensender(?:[\/#]|$)/],
+    ["adaptiveNet", /^https:\/\/tt1nker\.github\.io\/adaptiveNet\/index\.html$/],
+    ["hwine", /^https:\/\/github\.com\/TT1nKer\/hwine(?:[\/#]|$)/],
+    ["solar", /^https:\/\/github\.com\/TT1nKer\/solar(?:[\/#]|$)/],
+    ["pomodoroAKAtimer", /^https:\/\/(?:github\.com\/TT1nKer\/pomodoroAKAtimer(?:[\/#]|$)|ttinker\.net\/pomodoro\/)/],
+    ["fstCC", /^https:\/\/github\.com\/TT1nKer\/fstCC(?:[\/#]|$)/],
+    ["StockItsMygo", /^https:\/\/github\.com\/TT1nKer\/StockItsMygo(?:[\/#]|$)/],
+    ["BoOS", /^https:\/\/github\.com\/BoltzmannOS-BoOS\/minimalLinuxCore(?:[\/#]|$)/],
+  ];
+  for (const [project, destination] of targets) {
+    const matches = links.filter(([, href]) => destination.test(href));
+    assert.ok(matches.length, `No real destination for ${project}`);
+    for (const [tag, , content] of matches) {
+      assert.ok(content.replace(/<[^>]*>/g, "").trim() || /aria-label="[^"]+"/.test(tag), `Unnamed ${project} link`);
+    }
+  }
   const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(source, /["']use client["']|from ["']next\/link["']/);
+});
+
+test("provides accessible source selections with corresponding assembly groups", async () => {
+  const response = await render();
+  const html = await response.text();
+  const buttons = [...html.matchAll(/<button\b[^>]*data-trace-key="([^"]+)"[^>]*>([\s\S]*?)<\/button>/g)];
+  const groups = new Set([...html.matchAll(/data-asm-group="([^"]+)"/g)].map(([, key]) => key));
+  assert.ok(buttons.length > 1, "The work sample must offer actual source selections");
+  assert.equal(new Set(buttons.map(([, key]) => key)).size, buttons.length);
+  for (const [button, key, label] of buttons) {
+    assert.ok(groups.has(key), `Missing assembly group for ${key}`);
+    assert.match(button, /aria-pressed="(?:true|false)"/);
+    assert.ok(label.replace(/<[^>]*>/g, "").trim() || /aria-label="[^"]+"/.test(button));
+  }
+  assert.ok(buttons.filter(([button]) => /aria-pressed="true"/.test(button)).length <= 1);
+  const interaction = await readFile(new URL("../public/portfolio/work.js", import.meta.url), "utf8");
+  assert.doesNotMatch(interaction, /\/liubai\/|\bblog\b|journal-teaser|data-latest|latest-story|loadLatest|\/api\/posts|\bfetch\s*\(|home-atlas|TinkerPlate/);
+  assert.doesNotMatch(interaction, /\p{Script=Han}/u);
 });
 
 test("renders the AI-native Boltzmann Operating System showcase", async () => {
