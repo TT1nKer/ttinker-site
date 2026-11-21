@@ -1,4 +1,24 @@
-# vinext-starter
+# TT1nKer personal site
+
+The homepage is authored in `app/page.tsx` and exported as plain HTML. Its CSS,
+local fonts, illustrations and interaction scripts live in `public/home-atlas/`.
+`npm run export` builds the app, renders both routes, and writes `out/`. The root
+export keeps the server-rendered `<main>` and metadata, with no React runtime,
+RSC payload, shared stylesheet or external font dependency. `/boos/` retains its
+original full export. Home CSS, scripts and preview images receive a content-hash
+query version so subsequent releases bypass stale browser caches. `npm test`
+checks both routes and the isolated home assets.
+
+For the existing Nginx host, start a new release from the **current live release**
+and replace only `out/index.html` and `out/home-atlas/`. Do not replace the whole
+release with `out/`: `/boos/` still needs the live release's hashed `assets/` files,
+and `/RedNoteCover/` is maintained separately. Keep the existing icons, all other
+site paths, proxy routes and blog data. Verify the candidate before switching the
+`/var/www/ttinker/site/current` symlink; retaining the previous release permits a
+rollback. The September 2026 production homepage was maintained outside the
+older July Git export, so the old repository build alone is not a live-site backup.
+
+## Build tooling
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
@@ -89,7 +109,8 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 
 - `npm run dev`: start local development
 - `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
+- `npm test`: build and verify both rendered routes, the homepage export, and asset isolation
+- `npm run export`: build and write the root and BoOS static pages to `out/`
 - `npm run db:generate`: generate Drizzle migrations after schema changes
 
 ## Learn More

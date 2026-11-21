@@ -23,25 +23,38 @@ async function render(pathname = "/") {
   );
 }
 
-test("renders the authored portfolio instead of starter or template copy", async () => {
+test("renders the complete Chinese project directory and useful destinations on the server", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
   const html = await response.text();
-  assert.match(html, /<title>TT1nKer<\/title>/i);
-  assert.match(html, /TT1NKER\./);
-  assert.match(html, /ACTIVE SYSTEM/);
-  assert.match(html, /SYSTEM INDEX/);
-  assert.match(html, /FIELD NOTES/);
-  assert.match(html, /chatcommons/);
-  assert.match(html, /Boltzmann Operating System/);
+  assert.match(html, /<title>TT1nKer · 个人项目与随记<\/title>/);
+  assert.match(html, /<main id="top" class="atlas">/);
+  assert.match(html, /href="\/liubai\/"/);
   assert.match(html, /href="\/boos\/"/);
-  assert.match(html, /0\.1\.0-alpha\.3/);
-  assert.match(html, /chatcommons\.chat\.v2/);
-  assert.match(html, /CURRENT BOUNDARY/);
-  assert.doesNotMatch(html, /OWN REPOSITORIES|PEERS \/ LOCAL/);
-  assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SEND IT MY WAY|RECENT WORK|LOCAL FIRST/i);
+  assert.match(html, /href="https:\/\/ttinker\.net\/pomodoro\/"/);
+  assert.match(html, /href="https:\/\/github\.com\/TT1nKer"/);
+  assert.match(html, /href="https:\/\/tt1nker\.github\.io\/adaptiveNet\/index\.zh\.html"/);
+
+  const projects = ["chatcommons", "opensender", "adaptiveNet", "hwine", "solar", "pomodoroAKAtimer", "fstCC", "StockItsMygo", "BoOS"];
+  const articles = [...html.matchAll(/<article\b[^>]*data-article="([^"]+)"[^>]*>[\s\S]*?<\/article>/g)];
+  assert.deepEqual(articles.map(([, id]) => id), projects);
+  for (const [article, id] of articles) {
+    assert.match(article, /<h2\b/);
+    assert.match(article, /<details\b/);
+    assert.match(article, /<a\b[^>]*href="(?:https:\/\/|\/boos\/)/);
+    assert.match(html, new RegExp(`data-project="${id}"`));
+  }
+  assert.match(articles[0][0], /0\.1\.0-alpha\.7/);
+  assert.match(articles[0][0], /暂无正式托管服务/);
+  assert.doesNotMatch(articles[0][0].split(">")[0], /\bhidden/);
+  for (const [article] of articles.slice(1)) assert.match(article.split(">")[0], /\bhidden/);
+  assert.match(html, /<input\b[^>]*type="range"[^>]*aria-label="图解进度"/);
+  assert.match(html, /data-play[^>]*aria-label="播放图解"[^>]*aria-pressed="false"/);
+  assert.match(html, /<canvas\b[^>]*role="img"[^>]*aria-label="[^"]+"/);
+  assert.doesNotMatch(html, /Your site is taking shape|SEND IT MY WAY|CURRENT BOUNDARY|ACTIVE SYSTEM/);
+  const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.doesNotMatch(source, /["']use client["']|from ["']next\/link["']/);
 });
 
 test("renders the AI-native Boltzmann Operating System showcase", async () => {
@@ -68,92 +81,7 @@ test("renders the AI-native Boltzmann Operating System showcase", async () => {
   assert.doesNotMatch(source, /["']use client["']/);
 });
 
-test("ships causal hero and evidence-backed system archive with cleanup and reduced-motion coverage", async () => {
-  const [stage, archive, visual, glitch, css, boosCss, page] = await Promise.all([
-    readFile(new URL("../app/SignalStage.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/SystemsArchive.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/ProjectVisual.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/GlitchTitle.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
-    readFile(new URL("../app/boos/boos.css", import.meta.url), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-  ]);
-
-  assert.match(stage, /pointermove/);
-  assert.match(stage, /visibilitychange/);
-  assert.match(stage, /cancelAnimationFrame/);
-  assert.match(stage, /prefers-reduced-motion/);
-  assert.match(stage, /removeEventListener/);
-  assert.match(stage, /QUESTION/);
-  assert.match(stage, /MODEL/);
-  assert.match(stage, /REVISE/);
-  assert.doesNotMatch(stage, /PROMPT/);
-  assert.match(archive, /0\.1\.0-alpha\.3/);
-  assert.match(archive, /chatcommons\.chat\.v2/);
-  assert.match(archive, /Ed25519/);
-  assert.match(archive, /Direct QUIC \/ Relay v2/);
-  assert.match(archive, /No production hosted service/);
-  assert.match(archive, /opensender/);
-  assert.match(archive, /hwine/);
-  assert.match(archive, /solar/);
-  assert.match(archive, /pomodoroAKAtimer/);
-  assert.match(archive, /39 \/ 39 TESTS/);
-  assert.doesNotMatch(archive, /Model Brain Surgery|model-brain-surgery|ablation/i);
-  assert.match(archive, /onPointerEnter/);
-  assert.match(archive, /onFocus/);
-  assert.match(archive, /aria-live/);
-  assert.match(visual, /drawProtocolMorph/);
-  assert.match(visual, /drawTransferFieldMorph/);
-  assert.match(visual, /drawCalibrationBridge/);
-  assert.match(visual, /document\.createElement\("canvas"\)/);
-  assert.match(visual, /smoothstep\(\.48,\s*\.98,\s*localProgress\)/);
-  assert.match(visual, /drawDatapath/);
-  assert.match(visual, /drawOrbitTransfer/);
-  assert.match(visual, /drawFocusPhases/);
-  assert.match(visual, /drawCompiler/);
-  assert.match(visual, /drawMarketFilter/);
-  assert.match(visual, /IntersectionObserver/);
-  assert.match(visual, /ResizeObserver/);
-  assert.match(visual, /Math\.min\(1\.5,\s*window\.devicePixelRatio/);
-  assert.match(visual, /cancelAnimationFrame/);
-  assert.match(visual, /observer\.disconnect/);
-  assert.match(glitch, /ttinker:disturb/);
-  assert.match(glitch, /between\(5200,\s*14800\)/);
-  assert.match(glitch, /--glitch-primary-x/);
-  assert.match(glitch, /--glitch-signal-x/);
-  assert.match(css, /\.active-system/);
-  assert.match(css, /\.protocol-map/);
-  assert.match(css, /\.system-index/);
-  assert.match(css, /\.system-inspector\s*\{[^}]*position:\s*sticky/s);
-  assert.match(css, /\.field-notes/);
-  assert.match(css, /protocol-packet/);
-  assert.match(css, /@media \(max-width:\s*760px\)/);
-  assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
-  assert.match(css, /--ink:\s*#17131d/);
-  assert.match(css, /--accent-primary:\s*#516394/);
-  assert.match(css, /--accent-signal:\s*#d06435/);
-  assert.match(css, /--surface-primary:\s*#2948e8/);
-  assert.doesNotMatch(css, /--(?:coral|cyan|lime):/);
-  assert.match(boosCss, /\.boos-hero-copy\s*\{[^}]*min-width:\s*0/s);
-  assert.match(page, /SystemsArchive/);
-  assert.match(page, /Questions before conclusions/);
-  assert.doesNotMatch(page, /field-strip|project-grid/);
-  assert.doesNotMatch(page, /\bai-town\b|\bopenclaw\b|\bMaaFramework\b/);
-});
-
-test("keeps the desktop active system as a full-viewport composition", async () => {
-  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
-
-  assert.match(
-    css,
-    /\.active-system\s*\{[^}]*min-height:\s*100svh;[^}]*display:\s*grid;[^}]*grid-template-rows:\s*auto minmax\(0,\s*1fr\) auto auto;/s,
-  );
-  assert.match(
-    css,
-    /\.active-system-grid\s*\{[^}]*min-height:\s*0;[^}]*align-content:\s*center;/s,
-  );
-  assert.match(
-    css,
-    /@media \(max-width:\s*760px\)[\s\S]*?\.active-system\s*\{[^}]*min-height:\s*0;[^}]*display:\s*block;/,
-  );
+test("preserves the BoOS overflow correction", async () => {
+  const css = await readFile(new URL("../app/boos/boos.css", import.meta.url), "utf8");
+  assert.match(css, /\.boos-hero-copy\s*\{[^}]*min-width:\s*0/s);
 });
